@@ -1268,55 +1268,6 @@
       </div>
     </section>
 
-    <main class="main-area">
-      <section class="panel" aria-label="互动功能区">
-        <div class="panel-header">
-          <h3>敬献心意</h3>
-          <p>请先填写姓名，再送花、点烛、留言或上传缅怀图片。所有记录会保存到后端数据库，并实时展示。</p>
-        </div>
-        <div class="form-body">
-          <div class="form-row">
-            <label for="visitorName">您的姓名</label>
-            <input id="visitorName" type="text" maxlength="30" placeholder="请输入姓名" autocomplete="name" />
-          </div>
-
-          <div class="quick-actions">
-            <button class="action-btn" id="flowerBtn" type="button">🌼 送鲜花</button>
-            <button class="action-btn" id="candleBtn" type="button">🕯️ 点蜡烛</button>
-          </div>
-
-          <div class="form-row">
-            <label for="messageText">缅怀留言</label>
-            <textarea id="messageText" maxlength="1000" placeholder="写下您对彭老师的思念、感谢或祝福……"></textarea>
-            <button class="submit-btn" id="messageBtn" type="button">提交留言</button>
-          </div>
-
-          <div class="form-row">
-            <label>上传缅怀图片</label>
-            <div class="file-line">
-              <label class="file-label" for="imageInput">选择图片</label>
-              <input id="imageInput" type="file" accept="image/jpeg,image/png,image/webp,image/gif" />
-              <div class="file-name" id="fileName">支持 jpg、png、webp、gif；单张不超过 5MB。</div>
-              <button class="submit-btn" id="imageBtn" type="button">上传图片</button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="panel messages-panel" aria-label="留言展示区">
-        <div class="panel-header">
-          <div class="panel-title-row">
-            <h3>亲友缅怀留言</h3>
-            <span class="record-count" id="recordCount">共 0 条</span>
-          </div>
-          <p>最新记录显示在顶部。送花、点烛、文字留言与图片留言都会在这里展示。</p>
-        </div>
-        <div class="messages-list" id="messagesList">
-          <div class="empty-state">正在加载缅怀记录……</div>
-        </div>
-      </section>
-    </main>
-
     <section class="quote-section" aria-label="先生遗风与经典语录">
       <div class="quote-card">
         <div class="quote-title-row">
@@ -1369,6 +1320,55 @@
         </div>
       </div>
     </section>
+
+    <main class="main-area">
+      <section class="panel" aria-label="互动功能区">
+        <div class="panel-header">
+          <h3>敬献心意</h3>
+          <p>请先填写姓名，再送花、点烛、留言或上传缅怀图片。所有记录会保存到后端数据库，并实时展示。</p>
+        </div>
+        <div class="form-body">
+          <div class="form-row">
+            <label for="visitorName">您的姓名</label>
+            <input id="visitorName" type="text" maxlength="30" placeholder="请输入姓名" autocomplete="name" />
+          </div>
+
+          <div class="quick-actions">
+            <button class="action-btn" id="flowerBtn" type="button">🌼 送鲜花</button>
+            <button class="action-btn" id="candleBtn" type="button">🕯️ 点蜡烛</button>
+          </div>
+
+          <div class="form-row">
+            <label for="messageText">缅怀留言</label>
+            <textarea id="messageText" maxlength="1000" placeholder="写下您对彭老师的思念、感谢或祝福……"></textarea>
+            <button class="submit-btn" id="messageBtn" type="button">提交留言</button>
+          </div>
+
+          <div class="form-row">
+            <label>上传缅怀图片</label>
+            <div class="file-line">
+              <label class="file-label" for="imageInput">选择图片</label>
+              <input id="imageInput" type="file" accept="image/jpeg,image/png,image/webp,image/gif" />
+              <div class="file-name" id="fileName">支持 jpg、png、webp、gif；单张不超过 5MB。</div>
+              <button class="submit-btn" id="imageBtn" type="button">上传图片</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel messages-panel" aria-label="留言展示区">
+        <div class="panel-header">
+          <div class="panel-title-row">
+            <h3>亲友缅怀留言</h3>
+            <span class="record-count" id="recordCount">共 0 条</span>
+          </div>
+          <p>最新记录显示在顶部。送花、点烛、文字留言与图片留言都会在这里展示。</p>
+        </div>
+        <div class="messages-list" id="messagesList">
+          <div class="empty-state">正在加载缅怀记录……</div>
+        </div>
+      </section>
+    </main>
 
     <footer class="footer">
       彭聃龄先生千古<br />愿烛光与鲜花，长伴先生温厚风范。<br />彭聃龄先生线上缅怀室 · 永远的怀念
