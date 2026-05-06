@@ -1,0 +1,1615 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>彭聃龄先生线上缅怀室</title>
+  <meta name="description" content="彭聃龄先生线上缅怀室：浏览生平事迹，送花点烛，留言寄托哀思。" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --bg-1: #111316;
+      --bg-2: #22252b;
+      --card: rgba(255, 255, 255, 0.08);
+      --card-strong: rgba(255, 255, 255, 0.13);
+      --line: rgba(255, 255, 255, 0.16);
+      --text: #f5f1e8;
+      --muted: rgba(245, 241, 232, 0.72);
+      --soft: rgba(245, 241, 232, 0.58);
+      --gold: #d9bc7d;
+      --gold-2: #f1d69a;
+      --deep: #08090b;
+      --danger: #f1b7ad;
+      --ok: #b8d7c0;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.32);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      color: var(--text);
+      font-family: "Noto Serif SC", "Songti SC", "STSong", "Microsoft YaHei", serif;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(217, 188, 125, 0.12), transparent 30%),
+        radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.06), transparent 28%),
+        linear-gradient(135deg, var(--bg-1), var(--bg-2) 54%, #111113);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -3;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 46px 46px;
+      mask-image: linear-gradient(to bottom, black, transparent 96%);
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background: linear-gradient(to bottom, rgba(0,0,0,.12), rgba(0,0,0,.54));
+      pointer-events: none;
+    }
+
+    .page {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 22px 0 56px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 10px 0 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      letter-spacing: 0.08em;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      color: var(--gold-2);
+      background: rgba(255,255,255,0.05);
+      box-shadow: 0 0 32px rgba(217, 188, 125, 0.08);
+    }
+
+    .brand h1 {
+      font-size: clamp(18px, 2vw, 26px);
+      font-weight: 500;
+      line-height: 1.25;
+    }
+
+    .brand p {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 13px;
+      letter-spacing: 0.12em;
+    }
+
+    .music-btn {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.08);
+      color: var(--text);
+      min-width: 118px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: .25s ease;
+      backdrop-filter: blur(14px);
+      font-family: inherit;
+    }
+
+    .music-btn:hover {
+      border-color: rgba(217,188,125,.62);
+      transform: translateY(-1px);
+      box-shadow: 0 10px 28px rgba(0,0,0,.18);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .stat-card {
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 18px 18px 16px;
+      background: linear-gradient(145deg, rgba(255,255,255,0.12), rgba(255,255,255,0.055));
+      box-shadow: 0 18px 46px rgba(0,0,0,0.16);
+      position: relative;
+      overflow: hidden;
+      min-height: 112px;
+    }
+
+    .stat-card::after {
+      content: "";
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      right: -40px;
+      top: -50px;
+      border-radius: 50%;
+      background: rgba(217,188,125,.08);
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 14px;
+      letter-spacing: .08em;
+    }
+
+    .stat-number {
+      margin-top: 11px;
+      font-size: clamp(28px, 3.3vw, 44px);
+      color: var(--gold-2);
+      font-family: Georgia, "Times New Roman", serif;
+      line-height: 1;
+    }
+
+    .stat-note {
+      margin-top: 9px;
+      font-size: 12px;
+      color: var(--soft);
+    }
+
+    .hero {
+      min-height: 52vh;
+      display: grid;
+      grid-template-columns: minmax(260px, 0.9fr) minmax(320px, 1.35fr);
+      gap: 24px;
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: 34px;
+      background:
+        linear-gradient(115deg, rgba(255,255,255,.12), rgba(255,255,255,.05)),
+        radial-gradient(circle at 10% 20%, rgba(217,188,125,.11), transparent 32%);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero::before {
+      content: "先生千古 · 风范长存";
+      position: absolute;
+      right: -18px;
+      bottom: 16px;
+      color: rgba(255,255,255,0.045);
+      font-size: clamp(54px, 9vw, 112px);
+      font-weight: 700;
+      letter-spacing: .12em;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .portrait-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      padding: 24px 18px;
+      border-radius: 28px;
+      border: 1px solid var(--line);
+      background: rgba(5,5,5,.18);
+      backdrop-filter: blur(18px);
+      overflow: hidden;
+    }
+
+    .portrait-wrap {
+      width: min(245px, 64vw);
+      aspect-ratio: 4 / 5;
+      border-radius: 22px;
+      padding: 8px;
+      background: linear-gradient(145deg, rgba(217,188,125,.75), rgba(255,255,255,.18), rgba(217,188,125,.32));
+      box-shadow: 0 22px 60px rgba(0,0,0,.34);
+    }
+
+    .portrait-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      border-radius: 16px;
+      filter: grayscale(22%) contrast(1.02);
+      background: #222;
+    }
+
+    .person-name {
+      text-align: center;
+    }
+
+    .person-name h2 {
+      font-size: clamp(34px, 4.4vw, 58px);
+      font-weight: 500;
+      letter-spacing: .24em;
+      text-indent: .24em;
+      color: #fff9ed;
+    }
+
+    .years {
+      margin-top: 8px;
+      color: var(--gold-2);
+      font-size: 20px;
+      letter-spacing: .16em;
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    .epitaph {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.85;
+      text-align: center;
+    }
+
+    .bio-panel {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 18px;
+      z-index: 1;
+      padding: 10px 4px;
+    }
+
+    .section-kicker {
+      color: var(--gold-2);
+      font-size: 14px;
+      letter-spacing: .2em;
+    }
+
+    .bio-title {
+      font-size: clamp(26px, 3vw, 42px);
+      line-height: 1.25;
+      font-weight: 500;
+      letter-spacing: .05em;
+    }
+
+    .bio-text {
+      color: rgba(255,255,255,.84);
+      font-size: clamp(16px, 1.35vw, 19px);
+      line-height: 2.05;
+      max-width: 720px;
+      min-height: 126px;
+    }
+
+    .bio-dots {
+      display: flex;
+      gap: 9px;
+      align-items: center;
+      margin-top: 2px;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.34);
+      background: transparent;
+      cursor: pointer;
+      transition: .25s ease;
+    }
+
+    .dot.active {
+      width: 30px;
+      border-radius: 999px;
+      border-color: var(--gold-2);
+      background: var(--gold-2);
+      box-shadow: 0 0 18px rgba(217,188,125,.36);
+    }
+
+    .main-area {
+      display: grid;
+      grid-template-columns: minmax(280px, 0.82fr) minmax(340px, 1.18fr);
+      gap: 22px;
+      margin-top: 22px;
+      align-items: start;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 30px;
+      background: linear-gradient(145deg, rgba(255,255,255,.105), rgba(255,255,255,.045));
+      box-shadow: 0 18px 52px rgba(0,0,0,.18);
+      backdrop-filter: blur(16px);
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 20px 22px 14px;
+      border-bottom: 1px solid rgba(255,255,255,.12);
+    }
+
+    .panel-header h3 {
+      font-size: 20px;
+      font-weight: 500;
+      letter-spacing: .08em;
+    }
+
+    .panel-header p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .form-body {
+      padding: 20px 22px 22px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 14px;
+      letter-spacing: .06em;
+    }
+
+    input[type="text"], textarea {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 18px;
+      background: rgba(0,0,0,.22);
+      color: var(--text);
+      padding: 13px 15px;
+      outline: none;
+      transition: .2s ease;
+      font-family: inherit;
+      font-size: 15px;
+    }
+
+    input[type="text"]:focus,
+    textarea:focus {
+      border-color: rgba(217,188,125,.68);
+      box-shadow: 0 0 0 4px rgba(217,188,125,.08);
+    }
+
+    textarea {
+      min-height: 116px;
+      resize: vertical;
+      line-height: 1.8;
+    }
+
+    .form-row + .form-row {
+      margin-top: 16px;
+    }
+
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .action-btn, .submit-btn, .file-label {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(217,188,125,.42);
+      color: #fff8e8;
+      background: linear-gradient(135deg, rgba(217,188,125,.27), rgba(255,255,255,.08));
+      min-height: 50px;
+      border-radius: 18px;
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: .25s ease;
+      font-family: inherit;
+      font-size: 15px;
+      letter-spacing: .04em;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      user-select: none;
+    }
+
+    .action-btn:hover, .submit-btn:hover, .file-label:hover {
+      transform: translateY(-1px);
+      border-color: rgba(217,188,125,.78);
+      box-shadow: 0 14px 36px rgba(0,0,0,.22), 0 0 28px rgba(217,188,125,.08);
+    }
+
+    .submit-btn {
+      width: 100%;
+      margin-top: 12px;
+      background: linear-gradient(135deg, rgba(217,188,125,.32), rgba(217,188,125,.12));
+    }
+
+    .file-line {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .file-name {
+      min-height: 22px;
+      color: var(--soft);
+      font-size: 13px;
+      line-height: 1.6;
+      word-break: break-all;
+    }
+
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      transform: scale(0);
+      animation: ripple .75s ease-out;
+      background: rgba(255,255,255,.32);
+      pointer-events: none;
+    }
+
+    @keyframes ripple {
+      to {
+        transform: scale(4.8);
+        opacity: 0;
+      }
+    }
+
+    .glow {
+      animation: glow .82s ease;
+    }
+
+    @keyframes glow {
+      0% { box-shadow: 0 0 0 rgba(217,188,125,0); }
+      45% { box-shadow: 0 0 36px rgba(217,188,125,.48); }
+      100% { box-shadow: 0 0 0 rgba(217,188,125,0); }
+    }
+
+    .float-emoji {
+      position: fixed;
+      z-index: 50;
+      pointer-events: none;
+      font-size: 28px;
+      animation: floatUp 1.35s ease-out forwards;
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,.28));
+    }
+
+    @keyframes floatUp {
+      0% { transform: translate(-50%, 0) scale(.8); opacity: 0; }
+      18% { opacity: 1; }
+      100% { transform: translate(-50%, -96px) scale(1.45); opacity: 0; }
+    }
+
+    .messages-panel {
+      min-height: 460px;
+    }
+
+    .messages-list {
+      padding: 16px;
+      max-height: 700px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+    }
+
+    .empty-state {
+      padding: 48px 18px;
+      text-align: center;
+      color: var(--muted);
+      line-height: 1.9;
+      border: 1px dashed rgba(255,255,255,.16);
+      border-radius: 22px;
+      margin: 6px;
+    }
+
+    .record {
+      display: grid;
+      grid-template-columns: 44px 1fr;
+      gap: 12px;
+      padding: 15px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 22px;
+      background: rgba(0,0,0,.16);
+      margin-bottom: 12px;
+      animation: fadeIn .28s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .record-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: rgba(217,188,125,.13);
+      border: 1px solid rgba(217,188,125,.24);
+      font-size: 20px;
+    }
+
+    .record-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: baseline;
+      margin-bottom: 6px;
+    }
+
+    .visitor {
+      color: #fff8e8;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: .03em;
+    }
+
+    .time {
+      color: var(--soft);
+      font-size: 12px;
+      white-space: nowrap;
+      font-family: "Microsoft YaHei", sans-serif;
+    }
+
+    .record-text {
+      color: rgba(255,255,255,.82);
+      line-height: 1.85;
+      font-size: 15px;
+      word-break: break-word;
+      white-space: pre-wrap;
+    }
+
+    .record-img {
+      display: block;
+      width: min(100%, 360px);
+      max-height: 280px;
+      object-fit: cover;
+      margin-top: 10px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.13);
+      background: rgba(0,0,0,.22);
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 26px;
+      transform: translateX(-50%) translateY(20px);
+      z-index: 100;
+      width: min(520px, calc(100% - 32px));
+      padding: 13px 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(16,17,19,.88);
+      color: var(--text);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 18px 60px rgba(0,0,0,.34);
+      opacity: 0;
+      pointer-events: none;
+      transition: .24s ease;
+      text-align: center;
+      line-height: 1.65;
+      font-size: 14px;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .setup-warning {
+      display: none;
+      margin: 0 0 18px;
+      padding: 14px 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(241,183,173,.35);
+      background: rgba(241,183,173,.11);
+      color: #ffe0dc;
+      line-height: 1.75;
+      font-size: 14px;
+    }
+
+    .setup-warning.show {
+      display: block;
+    }
+
+    .footer {
+      text-align: center;
+      color: var(--soft);
+      font-size: 13px;
+      line-height: 1.8;
+      margin-top: 34px;
+      letter-spacing: .06em;
+    }
+
+    .loading {
+      opacity: .65;
+      pointer-events: none;
+    }
+
+    @media (max-width: 900px) {
+      .page {
+        width: min(100% - 28px, 1180px);
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
+        min-height: auto;
+        gap: 18px;
+      }
+
+      .portrait-card {
+        min-height: auto;
+      }
+
+      .bio-panel {
+        padding: 2px 0 6px;
+      }
+
+      .bio-text {
+        min-height: 150px;
+      }
+
+      .main-area {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      body {
+        background:
+          radial-gradient(circle at 20% 5%, rgba(217, 188, 125, 0.10), transparent 28%),
+          linear-gradient(160deg, #101114, #202329 62%, #101113);
+      }
+
+      .page {
+        width: min(100% - 18px, 1180px);
+        padding: 10px 0 38px;
+      }
+
+      .topbar {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 10px;
+        padding-bottom: 12px;
+      }
+
+      .brand {
+        gap: 10px;
+      }
+
+      .brand-mark {
+        width: 36px;
+        height: 36px;
+        flex: 0 0 36px;
+        font-size: 14px;
+      }
+
+      .brand h1 {
+        font-size: 20px;
+        letter-spacing: .03em;
+      }
+
+      .brand p {
+        font-size: 12px;
+        letter-spacing: .08em;
+      }
+
+      .music-btn {
+        width: 100%;
+        min-height: 42px;
+        padding: 9px 12px;
+      }
+
+      .setup-warning {
+        margin-bottom: 12px;
+        border-radius: 16px;
+        font-size: 13px;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 9px;
+        margin-bottom: 12px;
+      }
+
+      .stat-card {
+        min-height: 92px;
+        border-radius: 18px;
+        padding: 13px 12px 12px;
+      }
+
+      .stat-card::after {
+        width: 86px;
+        height: 86px;
+        right: -34px;
+        top: -38px;
+      }
+
+      .stat-label {
+        font-size: 12px;
+        letter-spacing: .04em;
+      }
+
+      .stat-number {
+        margin-top: 8px;
+        font-size: 30px;
+      }
+
+      .stat-note {
+        margin-top: 7px;
+        font-size: 11px;
+      }
+
+      .hero, .panel {
+        border-radius: 22px;
+      }
+
+      .hero {
+        padding: 13px;
+        gap: 14px;
+      }
+
+      .hero::before {
+        display: none;
+      }
+
+      .portrait-card {
+        padding: 16px 12px;
+        gap: 13px;
+        border-radius: 20px;
+      }
+
+      .portrait-wrap {
+        width: min(58vw, 210px);
+        padding: 6px;
+        border-radius: 18px;
+      }
+
+      .portrait-wrap img {
+        border-radius: 13px;
+      }
+
+      .person-name h2 {
+        font-size: 34px;
+        letter-spacing: .16em;
+        text-indent: .16em;
+      }
+
+      .years {
+        margin-top: 6px;
+        font-size: 17px;
+      }
+
+      .epitaph {
+        font-size: 14px;
+        line-height: 1.7;
+      }
+
+      .bio-panel {
+        gap: 10px;
+        padding: 2px 2px 4px;
+      }
+
+      .section-kicker {
+        font-size: 12px;
+      }
+
+      .bio-title {
+        font-size: 23px;
+        line-height: 1.35;
+      }
+
+      .bio-text {
+        min-height: auto;
+        font-size: 15px;
+        line-height: 1.9;
+      }
+
+      .bio-dots {
+        flex-wrap: wrap;
+        gap: 8px;
+        padding-top: 2px;
+      }
+
+      .dot {
+        width: 8px;
+        height: 8px;
+      }
+
+      .dot.active {
+        width: 26px;
+      }
+
+      .main-area {
+        gap: 14px;
+        margin-top: 14px;
+      }
+
+      .panel-header {
+        padding: 16px 16px 12px;
+      }
+
+      .panel-header h3 {
+        font-size: 18px;
+      }
+
+      .panel-header p {
+        font-size: 12px;
+      }
+
+      .form-body {
+        padding: 16px;
+      }
+
+      label {
+        font-size: 13px;
+      }
+
+      input[type="text"], textarea {
+        border-radius: 15px;
+        padding: 12px 13px;
+        font-size: 15px;
+      }
+
+      textarea {
+        min-height: 104px;
+      }
+
+      .quick-actions {
+        grid-template-columns: 1fr 1fr;
+        gap: 9px;
+      }
+
+      .action-btn, .submit-btn, .file-label {
+        min-height: 46px;
+        border-radius: 15px;
+        padding: 10px 11px;
+        font-size: 14px;
+      }
+
+      .messages-panel {
+        min-height: auto;
+      }
+
+      .messages-list {
+        padding: 12px;
+        max-height: none;
+        overflow-y: visible;
+      }
+
+      .empty-state {
+        padding: 32px 14px;
+        border-radius: 18px;
+        font-size: 14px;
+      }
+
+      .record {
+        grid-template-columns: 36px 1fr;
+        gap: 10px;
+        padding: 12px;
+        border-radius: 18px;
+      }
+
+      .record-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 18px;
+      }
+
+      .record-meta {
+        display: block;
+      }
+
+      .visitor {
+        font-size: 15px;
+      }
+
+      .time {
+        display: block;
+        margin-top: 3px;
+        font-size: 11px;
+      }
+
+      .record-text {
+        font-size: 14px;
+        line-height: 1.75;
+      }
+
+      .record-img {
+        width: 100%;
+        max-height: 260px;
+        border-radius: 14px;
+      }
+
+      .toast {
+        bottom: 18px;
+        width: min(92vw, 520px);
+        border-radius: 15px;
+      }
+
+      .footer {
+        margin-top: 24px;
+        font-size: 12px;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .quick-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .portrait-wrap {
+        width: min(68vw, 200px);
+      }
+
+      .person-name h2 {
+        font-size: 31px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <audio id="bgm" src="./assets/secret-garden-piano.mp3" preload="auto" loop></audio>
+
+  <div class="page">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">悼</div>
+        <div>
+          <h1>彭聃龄先生线上缅怀室</h1>
+          <p>深切缅怀 · 永志师恩</p>
+        </div>
+      </div>
+      <button class="music-btn" id="musicToggle" type="button" aria-label="音乐开关">
+        <span id="musicIcon">♪</span><span id="musicText">音乐开启</span>
+      </button>
+    </header>
+
+    <div class="setup-warning" id="setupWarning">
+      当前还没有填写 Supabase URL 和 Publishable key。请先完成后端配置，否则送花、点烛、留言和图片上传不能保存。
+    </div>
+
+    <section class="stats-grid" aria-label="缅怀统计">
+      <div class="stat-card">
+        <div class="stat-label">送鲜花总数量</div>
+        <div class="stat-number" id="flowerCount">0</div>
+        <div class="stat-note">所有访客累计送花</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">点蜡烛总数量</div>
+        <div class="stat-number" id="candleCount">0</div>
+        <div class="stat-note">所有访客累计点烛</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">今日吊唁人数</div>
+        <div class="stat-number" id="todayVisitors">0</div>
+        <div class="stat-note">今日独立访客数</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">累计吊唁人数</div>
+        <div class="stat-number" id="totalVisitors">0</div>
+        <div class="stat-note">上线以来独立访客数</div>
+      </div>
+    </section>
+
+    <section class="hero" aria-label="人物遗照与生平事迹">
+      <div class="portrait-card">
+        <div class="portrait-wrap">
+          <img src="./assets/微信图片_20260506095430_32_1763.jpg" alt="彭聃龄先生遗照" />
+        </div>
+        <div class="person-name">
+          <h2>彭聃龄</h2>
+          <div class="years">1935—2026</div>
+        </div>
+        <p class="epitaph">先生风范长存，学脉泽被后学。<br />谨以鲜花、烛光与文字寄托哀思。</p>
+      </div>
+
+      <div class="bio-panel">
+        <div class="section-kicker">生平事迹</div>
+        <h2 class="bio-title" id="bioTitle">学术与教育人生</h2>
+        <p class="bio-text" id="bioText"></p>
+        <div class="bio-dots" id="bioDots" aria-label="生平事迹轮播指示器"></div>
+      </div>
+    </section>
+
+    <main class="main-area">
+      <section class="panel" aria-label="互动功能区">
+        <div class="panel-header">
+          <h3>敬献心意</h3>
+          <p>请先填写姓名，再送花、点烛、留言或上传缅怀图片。所有记录会保存到后端数据库，并实时展示。</p>
+        </div>
+        <div class="form-body">
+          <div class="form-row">
+            <label for="visitorName">您的姓名</label>
+            <input id="visitorName" type="text" maxlength="30" placeholder="请输入姓名" autocomplete="name" />
+          </div>
+
+          <div class="quick-actions">
+            <button class="action-btn" id="flowerBtn" type="button">🌼 送鲜花</button>
+            <button class="action-btn" id="candleBtn" type="button">🕯️ 点蜡烛</button>
+          </div>
+
+          <div class="form-row">
+            <label for="messageText">缅怀留言</label>
+            <textarea id="messageText" maxlength="1000" placeholder="写下您对彭老师的思念、感谢或祝福……"></textarea>
+            <button class="submit-btn" id="messageBtn" type="button">提交留言</button>
+          </div>
+
+          <div class="form-row">
+            <label>上传缅怀图片</label>
+            <div class="file-line">
+              <label class="file-label" for="imageInput">选择图片</label>
+              <input id="imageInput" type="file" accept="image/jpeg,image/png,image/webp,image/gif" />
+              <div class="file-name" id="fileName">支持 jpg、png、webp、gif；单张不超过 5MB。</div>
+              <button class="submit-btn" id="imageBtn" type="button">上传图片</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel messages-panel" aria-label="留言展示区">
+        <div class="panel-header">
+          <h3>亲友缅怀留言</h3>
+          <p>最新记录显示在顶部。送花、点烛、文字留言与图片留言都会在这里展示。</p>
+        </div>
+        <div class="messages-list" id="messagesList">
+          <div class="empty-state">正在加载缅怀记录……</div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      彭聃龄先生千古<br />愿烛光与鲜花，长伴先生温厚风范。
+    </footer>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    // 第一步：把下面两行替换成你自己的 Supabase 信息。
+    // SUPABASE_URL：在 Supabase 左侧 Settings → Data API 中复制 Project URL。
+    // SUPABASE_PUBLIC_KEY：在 Settings → API Keys 中复制 Publishable key，不要使用 Secret key。
+    const SUPABASE_URL = 'https://rkxvccduocsowfbccrmg.supabase.co';
+    const SUPABASE_PUBLIC_KEY = 'sb_publishable_opaW2fRlrRVMnzEPZNRiUg_uqPX08sI';
+    const STORAGE_BUCKET = 'memorial-images';
+
+    const lifeSlides = [
+      {
+        title: '一生从教，矢志学科建设',
+        text: '彭聃龄先生1935年出生于湖南长沙，1958年毕业于北京师范大学教育系学校教育专业，同年留校任教。从教六十余载，先生潜心育人、笃志治学，将毕生心血奉献给中国心理学事业。'
+      },
+      {
+        title: '开拓认知心理学、心理语言学与认知神经科学',
+        text: '先生是我国认知心理学、心理语言学和认知神经科学的重要先驱与奠基人之一，率先推动具有中国特色的汉语认知及其神经机制研究，积极促进心理学与脑科学、语言学、教育学等领域的交叉融合。'
+      },
+      {
+        title: '推动脑与认知科学研究平台建设',
+        text: '20世纪90年代末，先生全力投入认知神经科学研究，推动北京师范大学脑与认知科学研究平台建设，组织开展汉语认知的脑成像研究，为我国认知神经科学、脑与学习研究及儿童脑智发展研究奠定重要基础。'
+      },
+      {
+        title: '立德树人，桃李芬芳',
+        text: '先生始终把立德树人、培养学生置于学术生涯的重要位置，荣获全国优秀教师称号。主编的《普通心理学》影响广泛，荣获教育部第二届全国教材建设奖高等教育类一等奖。'
+      },
+      {
+        title: '学术贡献深远，成果泽被后学',
+        text: '先生曾任北京师范大学原心理系主任、“脑与认知科学”研究中心主任，并曾担任教育部高校心理学教学指导委员会副主任、中国心理学会常务理事等职。其学术贡献深刻影响我国心理学和脑科学的发展进程。'
+      },
+      {
+        title: '晚年笔耕不辍，推动心理学科普',
+        text: '退休后，先生仍心系心理学事业发展与科学普及，撰写科普文章200余篇，出版《心理学纵横谈》《向心理学家提问》等科普著作，以通俗文字推动心理学走近社会、服务大众。'
+      }
+    ];
+
+    const isConfigured = !SUPABASE_URL.includes('YOUR_SUPABASE_URL') && !SUPABASE_PUBLIC_KEY.includes('YOUR_SUPABASE_PUBLISHABLE_KEY');
+    const client = isConfigured ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLIC_KEY, {
+      realtime: { params: { eventsPerSecond: 5 } }
+    }) : null;
+
+    const els = {
+      setupWarning: document.getElementById('setupWarning'),
+      flowerCount: document.getElementById('flowerCount'),
+      candleCount: document.getElementById('candleCount'),
+      todayVisitors: document.getElementById('todayVisitors'),
+      totalVisitors: document.getElementById('totalVisitors'),
+      bioTitle: document.getElementById('bioTitle'),
+      bioText: document.getElementById('bioText'),
+      bioDots: document.getElementById('bioDots'),
+      visitorName: document.getElementById('visitorName'),
+      flowerBtn: document.getElementById('flowerBtn'),
+      candleBtn: document.getElementById('candleBtn'),
+      messageText: document.getElementById('messageText'),
+      messageBtn: document.getElementById('messageBtn'),
+      imageInput: document.getElementById('imageInput'),
+      imageBtn: document.getElementById('imageBtn'),
+      fileName: document.getElementById('fileName'),
+      messagesList: document.getElementById('messagesList'),
+      toast: document.getElementById('toast'),
+      bgm: document.getElementById('bgm'),
+      musicToggle: document.getElementById('musicToggle'),
+      musicIcon: document.getElementById('musicIcon'),
+      musicText: document.getElementById('musicText')
+    };
+
+    let currentSlide = 0;
+    let records = [];
+    let toastTimer = null;
+    let musicEnabled = localStorage.getItem('memorial_music_enabled') !== 'false';
+
+    function getVisitorKey() {
+      let key = localStorage.getItem('memorial_visitor_key');
+      if (!key) {
+        key = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+        localStorage.setItem('memorial_visitor_key', key);
+      }
+      return key;
+    }
+
+    function showToast(message, type = 'normal') {
+      clearTimeout(toastTimer);
+      els.toast.textContent = message;
+      els.toast.style.borderColor = type === 'error' ? 'rgba(241,183,173,.55)' : 'rgba(255,255,255,.14)';
+      els.toast.classList.add('show');
+      toastTimer = setTimeout(() => els.toast.classList.remove('show'), 2600);
+    }
+
+    function requireBackend() {
+      if (isConfigured) return true;
+      showToast('请先在代码中填写 Supabase URL 和 Publishable key。', 'error');
+      return false;
+    }
+
+    function getName() {
+      const name = els.visitorName.value.trim();
+      if (!name) {
+        showToast('请先输入姓名。', 'error');
+        els.visitorName.focus();
+        return null;
+      }
+      localStorage.setItem('memorial_visitor_name', name);
+      return name;
+    }
+
+    function setLoading(button, loadingText) {
+      const oldText = button.textContent;
+      button.classList.add('loading');
+      button.disabled = true;
+      button.textContent = loadingText;
+      return () => {
+        button.classList.remove('loading');
+        button.disabled = false;
+        button.textContent = oldText;
+      };
+    }
+
+    function createRipple(event) {
+      const button = event.currentTarget;
+      const rect = button.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height);
+      const ripple = document.createElement('span');
+      ripple.className = 'ripple';
+      ripple.style.width = ripple.style.height = `${size}px`;
+      ripple.style.left = `${event.clientX - rect.left - size / 2}px`;
+      ripple.style.top = `${event.clientY - rect.top - size / 2}px`;
+      button.appendChild(ripple);
+      button.classList.add('glow');
+      setTimeout(() => ripple.remove(), 760);
+      setTimeout(() => button.classList.remove('glow'), 850);
+    }
+
+    function floatEmoji(emoji, event) {
+      const item = document.createElement('div');
+      item.className = 'float-emoji';
+      item.textContent = emoji;
+      item.style.left = `${event.clientX}px`;
+      item.style.top = `${event.clientY - 8}px`;
+      document.body.appendChild(item);
+      setTimeout(() => item.remove(), 1400);
+    }
+
+    function renderBio() {
+      const slide = lifeSlides[currentSlide];
+      els.bioTitle.textContent = slide.title;
+      els.bioText.textContent = slide.text;
+      els.bioDots.innerHTML = '';
+      lifeSlides.forEach((_, index) => {
+        const dot = document.createElement('button');
+        dot.className = `dot${index === currentSlide ? ' active' : ''}`;
+        dot.type = 'button';
+        dot.setAttribute('aria-label', `查看第${index + 1}条生平事迹`);
+        dot.addEventListener('click', () => {
+          currentSlide = index;
+          renderBio();
+        });
+        els.bioDots.appendChild(dot);
+      });
+    }
+
+    function startBioCarousel() {
+      renderBio();
+      setInterval(() => {
+        currentSlide = (currentSlide + 1) % lifeSlides.length;
+        renderBio();
+      }, 5600);
+    }
+
+    function formatTime(value) {
+      try {
+        return new Intl.DateTimeFormat('zh-CN', {
+          timeZone: 'Asia/Shanghai',
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit'
+        }).format(new Date(value));
+      } catch (error) {
+        return '';
+      }
+    }
+
+    function getRecordIcon(type) {
+      if (type === 'flower') return '🌼';
+      if (type === 'candle') return '🕯️';
+      if (type === 'image') return '🖼️';
+      return '📝';
+    }
+
+    function getRecordText(record) {
+      if (record.action_type === 'flower') return '为彭老师送出了鲜花';
+      if (record.action_type === 'candle') return '为彭老师点上了蜡烛';
+      if (record.action_type === 'image') return '上传了一张缅怀图片';
+      return record.content || '';
+    }
+
+    function renderRecords() {
+      els.messagesList.innerHTML = '';
+      if (!records.length) {
+        const empty = document.createElement('div');
+        empty.className = 'empty-state';
+        empty.textContent = isConfigured ? '还没有缅怀记录。您可以成为第一位留言的人。' : '请先完成 Supabase 配置，页面会在这里显示所有缅怀记录。';
+        els.messagesList.appendChild(empty);
+        return;
+      }
+
+      const frag = document.createDocumentFragment();
+      records.forEach(record => {
+        const item = document.createElement('article');
+        item.className = 'record';
+
+        const icon = document.createElement('div');
+        icon.className = 'record-icon';
+        icon.textContent = getRecordIcon(record.action_type);
+
+        const body = document.createElement('div');
+
+        const meta = document.createElement('div');
+        meta.className = 'record-meta';
+
+        const visitor = document.createElement('div');
+        visitor.className = 'visitor';
+        visitor.textContent = record.visitor_name;
+
+        const time = document.createElement('time');
+        time.className = 'time';
+        time.textContent = formatTime(record.created_at);
+
+        meta.appendChild(visitor);
+        meta.appendChild(time);
+
+        const text = document.createElement('div');
+        text.className = 'record-text';
+        if (record.action_type === 'message') {
+          text.textContent = getRecordText(record);
+        } else {
+          text.textContent = `${record.visitor_name}${getRecordText(record)}`;
+        }
+
+        body.appendChild(meta);
+        body.appendChild(text);
+
+        if (record.action_type === 'image' && record.image_url) {
+          const img = document.createElement('img');
+          img.className = 'record-img';
+          img.src = record.image_url;
+          img.alt = `${record.visitor_name}上传的缅怀图片`;
+          img.loading = 'lazy';
+          body.appendChild(img);
+        }
+
+        item.appendChild(icon);
+        item.appendChild(body);
+        frag.appendChild(item);
+      });
+
+      els.messagesList.appendChild(frag);
+    }
+
+    async function loadStats() {
+      if (!isConfigured) return;
+      const { data, error } = await client.rpc('get_memorial_stats');
+      if (error) {
+        console.error(error);
+        showToast('统计数据加载失败，请检查 Supabase SQL 是否已运行。', 'error');
+        return;
+      }
+      const stats = Array.isArray(data) ? data[0] : data;
+      els.flowerCount.textContent = stats?.flower_count ?? 0;
+      els.candleCount.textContent = stats?.candle_count ?? 0;
+      els.todayVisitors.textContent = stats?.today_visitors ?? 0;
+      els.totalVisitors.textContent = stats?.total_visitors ?? 0;
+    }
+
+    async function loadRecords() {
+      if (!isConfigured) {
+        renderRecords();
+        return;
+      }
+      const { data, error } = await client
+        .from('memorial_actions')
+        .select('id, created_at, visitor_name, visitor_key, action_type, content, image_url, image_path')
+        .order('created_at', { ascending: false })
+        .limit(300);
+      if (error) {
+        console.error(error);
+        showToast('缅怀记录加载失败，请检查 Supabase 权限设置。', 'error');
+        renderRecords();
+        return;
+      }
+      records = data || [];
+      renderRecords();
+    }
+
+    async function insertAction(action) {
+      if (!requireBackend()) return false;
+      const visitorName = getName();
+      if (!visitorName) return false;
+
+      const payload = {
+        visitor_name: visitorName,
+        visitor_key: getVisitorKey(),
+        action_type: action.type,
+        content: action.content || null,
+        image_url: action.imageUrl || null,
+        image_path: action.imagePath || null
+      };
+
+      const { error } = await client.from('memorial_actions').insert(payload);
+      if (error) {
+        console.error(error);
+        showToast('保存失败，请稍后再试或检查数据库权限。', 'error');
+        return false;
+      }
+      await loadStats();
+      return true;
+    }
+
+    async function handleFlower(event) {
+      createRipple(event);
+      floatEmoji('🌼', event);
+      const reset = setLoading(els.flowerBtn, '正在送花…');
+      const ok = await insertAction({ type: 'flower' });
+      reset();
+      if (ok) showToast('已为彭老师送出鲜花。');
+    }
+
+    async function handleCandle(event) {
+      createRipple(event);
+      floatEmoji('🕯️', event);
+      const reset = setLoading(els.candleBtn, '正在点烛…');
+      const ok = await insertAction({ type: 'candle' });
+      reset();
+      if (ok) showToast('已为彭老师点上蜡烛。');
+    }
+
+    async function handleMessage() {
+      const content = els.messageText.value.trim();
+      if (!content) {
+        showToast('请输入留言内容。', 'error');
+        els.messageText.focus();
+        return;
+      }
+      const reset = setLoading(els.messageBtn, '正在提交…');
+      const ok = await insertAction({ type: 'message', content });
+      reset();
+      if (ok) {
+        els.messageText.value = '';
+        showToast('留言已提交。');
+      }
+    }
+
+    function validateImage(file) {
+      const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+      if (!file) {
+        showToast('请先选择一张图片。', 'error');
+        return false;
+      }
+      if (!allowed.includes(file.type)) {
+        showToast('图片格式不支持。仅支持 jpg、png、webp、gif。', 'error');
+        return false;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        showToast('图片大小超出限制。单张图片不能超过 5MB。', 'error');
+        return false;
+      }
+      return true;
+    }
+
+    function getFileExt(file) {
+      const map = {
+        'image/jpeg': 'jpg',
+        'image/png': 'png',
+        'image/webp': 'webp',
+        'image/gif': 'gif'
+      };
+      return map[file.type] || 'jpg';
+    }
+
+    async function handleImageUpload() {
+      if (!requireBackend()) return;
+      const visitorName = getName();
+      if (!visitorName) return;
+
+      const file = els.imageInput.files[0];
+      if (!validateImage(file)) return;
+
+      const reset = setLoading(els.imageBtn, '正在上传…');
+      const ext = getFileExt(file);
+      const safeVisitor = visitorName.replace(/[\\/\s]+/g, '_').slice(0, 24);
+      const path = `${getVisitorKey()}/${Date.now()}-${safeVisitor}.${ext}`;
+
+      const { error: uploadError } = await client.storage
+        .from(STORAGE_BUCKET)
+        .upload(path, file, { cacheControl: '3600', upsert: false, contentType: file.type });
+
+      if (uploadError) {
+        console.error(uploadError);
+        reset();
+        showToast('图片上传失败，请检查 Storage bucket 和权限。', 'error');
+        return;
+      }
+
+      const { data: publicData } = client.storage.from(STORAGE_BUCKET).getPublicUrl(path);
+      const ok = await insertAction({ type: 'image', imageUrl: publicData.publicUrl, imagePath: path });
+      reset();
+
+      if (ok) {
+        els.imageInput.value = '';
+        els.fileName.textContent = '支持 jpg、png、webp、gif；单张不超过 5MB。';
+        showToast('图片已上传。');
+      }
+    }
+
+    function subscribeRealtime() {
+      if (!isConfigured) return;
+      client
+        .channel('memorial-actions-realtime')
+        .on('postgres_changes', {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'memorial_actions'
+        }, payload => {
+          if (!payload.new || records.some(item => item.id === payload.new.id)) return;
+          records = [payload.new, ...records].slice(0, 300);
+          renderRecords();
+          loadStats();
+        })
+        .subscribe(status => {
+          if (status === 'CHANNEL_ERROR') {
+            showToast('实时更新连接失败，但不影响提交保存。', 'error');
+          }
+        });
+    }
+
+    function updateMusicButton() {
+      els.musicIcon.textContent = musicEnabled ? '♪' : '×';
+      els.musicText.textContent = musicEnabled ? '音乐开启' : '音乐关闭';
+    }
+
+    async function tryPlayMusic(showBlockedTip = false) {
+      if (!musicEnabled) {
+        els.bgm.pause();
+        updateMusicButton();
+        return;
+      }
+      try {
+        await els.bgm.play();
+        updateMusicButton();
+      } catch (error) {
+        console.warn('Autoplay blocked or failed:', error);
+        if (showBlockedTip) {
+          showToast('浏览器可能阻止了自动播放，请点击右上角音乐按钮开启。');
+        }
+      }
+    }
+
+    function initMusic() {
+      updateMusicButton();
+      els.bgm.addEventListener('error', () => {
+        showToast('背景音乐加载失败，请检查 assets/secret-garden-piano.mp3 是否存在。', 'error');
+      });
+
+      if (musicEnabled) {
+        tryPlayMusic(true);
+      }
+
+      els.musicToggle.addEventListener('click', async () => {
+        musicEnabled = !musicEnabled;
+        localStorage.setItem('memorial_music_enabled', musicEnabled ? 'true' : 'false');
+        updateMusicButton();
+        if (musicEnabled) {
+          await tryPlayMusic(false);
+          showToast('音乐已开启。');
+        } else {
+          els.bgm.pause();
+          showToast('音乐已关闭，刷新页面后也不会自动播放。');
+        }
+      });
+    }
+
+    function bindEvents() {
+      els.flowerBtn.addEventListener('click', handleFlower);
+      els.candleBtn.addEventListener('click', handleCandle);
+      els.messageBtn.addEventListener('click', handleMessage);
+      els.imageBtn.addEventListener('click', handleImageUpload);
+      els.imageInput.addEventListener('change', () => {
+        const file = els.imageInput.files[0];
+        els.fileName.textContent = file ? `已选择：${file.name}` : '支持 jpg、png、webp、gif；单张不超过 5MB。';
+      });
+      els.visitorName.addEventListener('input', () => {
+        localStorage.setItem('memorial_visitor_name', els.visitorName.value.trim());
+      });
+    }
+
+    async function init() {
+      if (!isConfigured) {
+        els.setupWarning.classList.add('show');
+      }
+      els.visitorName.value = localStorage.getItem('memorial_visitor_name') || '';
+      getVisitorKey();
+      startBioCarousel();
+      initMusic();
+      bindEvents();
+      await loadStats();
+      await loadRecords();
+      subscribeRealtime();
+    }
+
+    init();
+  </script>
+</body>
+</html>
