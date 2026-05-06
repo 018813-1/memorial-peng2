@@ -1339,7 +1339,6 @@
 
           <div class="admin-bar" aria-label="管理员操作区">
             <button class="mini-btn ghost-btn" id="adminToggleBtn" type="button">管理员模式</button>
-            <span class="admin-state" id="adminState">管理员可删除不适宜展示的留言</span>
           </div>
         </div>
 
@@ -2244,12 +2243,9 @@
       });
     }
 
-    function updateAdminUI() {
-      els.adminToggleBtn.textContent = adminMode ? '退出管理员模式' : '管理员模式';
-      els.adminState.textContent = adminMode
-        ? '管理员模式已开启：可删除不适宜展示的留言'
-        : '管理员可删除不适宜展示的留言';
-    }
+   function updateAdminUI() {
+  els.adminToggleBtn.textContent = adminMode ? '退出管理员模式' : '管理员模式';
+}
 
     function toggleAdminMode() {
       if (adminMode) {
