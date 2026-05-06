@@ -351,13 +351,6 @@
       letter-spacing: .08em;
     }
 
-    .section-header p {
-      margin-top: 8px;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.75;
-    }
-
     .memory-video-wrap {
       padding: 18px;
     }
@@ -379,18 +372,6 @@
       aspect-ratio: 16 / 9;
       object-fit: contain;
       background: rgba(0,0,0,.55);
-    }
-
-    .video-meta-row {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin-top: 12px;
-      color: var(--soft);
-      font-size: 13px;
-      line-height: 1.7;
     }
 
     .comments-layout {
@@ -508,7 +489,8 @@
 
     .mini-btn:hover,
     .submit-btn:hover,
-    .file-label:hover {
+    .file-label:hover,
+    .upload-icon-btn:hover {
       transform: translateY(-1px);
       border-color: rgba(217,188,125,.78);
       box-shadow: 0 14px 36px rgba(0,0,0,.22), 0 0 28px rgba(217,188,125,.08);
@@ -535,10 +517,34 @@
       display: none;
     }
 
-    .upload-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
+    .upload-icons {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .upload-icon-btn {
+      width: 88px;
+      height: 76px;
+      margin: 0;
+      border: 1px solid rgba(217,188,125,.42);
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(217,188,125,.18), rgba(255,255,255,.06));
+      color: #fff8e8;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      cursor: pointer;
+      font-size: 13px;
+      letter-spacing: .04em;
+      transition: .22s ease;
+    }
+
+    .upload-icon {
+      font-size: 25px;
+      line-height: 1;
     }
 
     .file-info {
@@ -1057,11 +1063,6 @@
         max-height: 56vh;
       }
 
-      .video-meta-row {
-        align-items: stretch;
-        flex-direction: column;
-      }
-
       .comments-layout {
         gap: 14px;
         margin-top: 14px;
@@ -1083,8 +1084,19 @@
         min-height: 132px;
       }
 
-      .upload-grid {
-        grid-template-columns: 1fr;
+      .upload-icons {
+        gap: 10px;
+      }
+
+      .upload-icon-btn {
+        width: 78px;
+        height: 68px;
+        border-radius: 16px;
+        font-size: 12px;
+      }
+
+      .upload-icon {
+        font-size: 22px;
       }
 
       .messages-list {
@@ -1208,7 +1220,6 @@
     <section class="section-block" aria-label="追忆影像视频播放模块">
       <div class="section-header">
         <h2>追忆影像</h2>
-        <p>追忆影像将自动播放。为保证自动播放，视频初始为静音；如需声音，可在视频控制条中开启。</p>
       </div>
 
       <div class="memory-video-wrap">
@@ -1218,18 +1229,12 @@
             class="memory-video"
             src="./assets/追忆影像.mp4"
             poster="./assets/2.jpg"
-            preload="metadata"
+            preload="auto"
             autoplay
-            muted
             playsinline
             controls>
             您的浏览器不支持视频播放，请下载或更换浏览器查看。
           </video>
-        </div>
-
-        <div class="video-meta-row">
-          <span>提示：如视频未自动播放，请点击视频左下角播放按钮；如需声音，请在视频控制条中打开声音。</span>
-          <button class="mini-btn" id="videoReplayBtn" type="button">重播影像</button>
         </div>
       </div>
     </section>
@@ -1238,7 +1243,6 @@
       <section class="section-block" aria-label="留言输入区">
         <div class="section-header">
           <h3>发表缅怀留言</h3>
-          <p>可提交文字、Emoji、图片与 PDF/Word 文档。未发送的文字内容会自动暂存，刷新后可继续编辑。</p>
         </div>
 
         <div class="form-body">
@@ -1272,17 +1276,23 @@
 
           <div class="form-row">
             <label>上传附件</label>
-            <div class="upload-grid">
-              <label class="file-label" for="imageInput">选择图片</label>
-              <label class="file-label" for="docInput">选择文档</label>
+
+            <div class="upload-icons">
+              <label class="upload-icon-btn" for="imageInput" title="上传图片" aria-label="上传图片">
+                <span class="upload-icon">🖼️</span>
+                <span>图片</span>
+              </label>
+
+              <label class="upload-icon-btn" for="docInput" title="上传文档" aria-label="上传文档">
+                <span class="upload-icon">📄</span>
+                <span>文档</span>
+              </label>
             </div>
 
             <input id="imageInput" type="file" multiple accept="image/jpeg,image/png,image/webp,image/gif" />
             <input id="docInput" type="file" multiple accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,.pdf,.doc,.docx" />
 
-            <div class="file-info" id="fileInfo">
-              图片最多 1000 张，文档最多 1000 份；单个文件和总大小均不超过 300MB。
-            </div>
+            <div class="file-info" id="fileInfo"></div>
           </div>
 
           <button class="submit-btn" id="submitCommentBtn" type="button">提交留言</button>
@@ -1295,8 +1305,6 @@
             <h3>亲友缅怀留言</h3>
             <span class="record-count" id="recordCount">共 0 条</span>
           </div>
-
-          <p>最新评论显示在最前面。每页展示 10 条主留言，回复会跟随原留言展示。</p>
 
           <div class="admin-bar" aria-label="管理员操作区">
             <button class="mini-btn ghost-btn" id="adminToggleBtn" type="button">管理员模式</button>
@@ -1369,7 +1377,6 @@
     const els = {
       setupWarning: document.getElementById('setupWarning'),
       memoryVideo: document.getElementById('memoryVideo'),
-      videoReplayBtn: document.getElementById('videoReplayBtn'),
       visitorName: document.getElementById('visitorName'),
       visitorRelation: document.getElementById('visitorRelation'),
       messageText: document.getElementById('messageText'),
@@ -1520,30 +1527,41 @@
     function initVideo() {
       if (!els.memoryVideo) return;
 
+      els.memoryVideo.muted = false;
+      els.memoryVideo.volume = 1;
+
+      els.memoryVideo.addEventListener('loadedmetadata', () => {
+        els.memoryVideo.muted = false;
+        els.memoryVideo.volume = 1;
+        tryPlayVideo(true);
+      });
+
       els.memoryVideo.addEventListener('error', () => {
         showToast('视频加载失败：请确认“追忆影像.mp4”在 assets 文件夹中。', 'error');
       });
 
-      els.videoReplayBtn.addEventListener('click', async () => {
-        els.memoryVideo.currentTime = 0;
-        const ok = await tryPlayVideo(false);
-        showToast(ok ? '追忆影像已从头播放。' : '请点击视频控制条播放。', ok ? 'normal' : 'error');
-      });
-
-      tryPlayVideo(false);
+      tryPlayVideo(true);
 
       document.addEventListener('click', () => {
+        els.memoryVideo.muted = false;
+        els.memoryVideo.volume = 1;
         if (els.memoryVideo.paused) tryPlayVideo(false);
       }, { once: true });
     }
 
     async function tryPlayVideo(showTip = false) {
       try {
+        els.memoryVideo.muted = false;
+        els.memoryVideo.volume = 1;
         await els.memoryVideo.play();
         return true;
       } catch (error) {
-        console.warn('Video autoplay blocked or failed:', error);
-        if (showTip) showToast('浏览器可能阻止了视频自动播放，请点击视频播放按钮。');
+        console.warn('Video autoplay with sound blocked or failed:', error);
+
+        if (showTip) {
+          showToast('浏览器可能限制有声自动播放，请点击视频播放按钮。');
+        }
+
         return false;
       }
     }
@@ -1557,12 +1575,19 @@
 
     function updateFileInfo() {
       const { images, docs } = selectedFiles();
-      const imageText = images.length ? `已选图片 ${images.length} 张` : '未选择图片';
-      const docText = docs.length ? `已选文档 ${docs.length} 份` : '未选择文档';
       const total = [...images, ...docs].reduce((sum, file) => sum + file.size, 0);
 
-      els.fileInfo.textContent =
-        `${imageText}；${docText}；合计 ${formatBytes(total)}。图片最多 1000 张，文档最多 1000 份；单个文件和总大小均不超过 300MB。`;
+      if (!images.length && !docs.length) {
+        els.fileInfo.textContent = '';
+        return;
+      }
+
+      const parts = [];
+      if (images.length) parts.push(`已选图片 ${images.length} 张`);
+      if (docs.length) parts.push(`已选文档 ${docs.length} 份`);
+      parts.push(`合计 ${formatBytes(total)}`);
+
+      els.fileInfo.textContent = parts.join('；');
     }
 
     function validateIdentityAndContent() {
