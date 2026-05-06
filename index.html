@@ -1499,7 +1499,8 @@
       if (uploadError) {
         console.error(uploadError);
         reset();
-        showToast('图片上传失败，请检查 Storage bucket 和权限。', 'error');
+        const detail = uploadError.message || uploadError.error_description || uploadError.error || '';
+        showToast(detail ? `图片上传失败：${detail}` : '图片上传失败，请检查 Storage bucket 和权限。', 'error');
         return;
       }
 
