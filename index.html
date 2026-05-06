@@ -301,14 +301,6 @@
       line-break: strict;
     }
 
-    .mourning-title span {
-      display: block;
-      margin-top: 6px;
-      color: var(--muted);
-      font-size: 13px;
-      letter-spacing: .12em;
-    }
-
     @media (min-width: 981px) {
       .mourning-title strong {
         white-space: nowrap;
@@ -453,6 +445,32 @@
       white-space: pre-wrap;
     }
 
+    .emoji-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .emoji-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 1;
+      transition: .2s ease;
+    }
+
+    .emoji-btn:hover {
+      border-color: rgba(217,188,125,.72);
+      background: rgba(217,188,125,.14);
+      transform: translateY(-1px);
+    }
+
     .reply-target {
       display: none;
       margin-bottom: 12px;
@@ -592,10 +610,9 @@
       margin-top: 10px;
     }
 
-    .admin-state {
-      color: var(--soft);
-      font-size: 12px;
-      line-height: 1.6;
+    .admin-bar-bottom {
+      padding: 0 16px 18px;
+      justify-content: flex-end;
     }
 
     .messages-list {
@@ -914,6 +931,12 @@
         width: min(100% - 26px, 1180px);
       }
 
+      .sticky-tribute {
+        position: relative;
+        top: auto;
+        z-index: 1;
+      }
+
       .tribute-main {
         grid-template-columns: 1fr;
       }
@@ -925,6 +948,10 @@
 
       .bio-text-card {
         min-height: auto;
+      }
+
+      .bio-text-inner {
+        min-height: 150px;
       }
 
       .portrait-frame {
@@ -945,9 +972,6 @@
       }
 
       .sticky-tribute {
-        position: relative;
-        top: auto;
-        z-index: 1;
         padding-top: 6px;
         margin-bottom: 14px;
       }
@@ -982,6 +1006,7 @@
         width: 32px;
         height: 32px;
         flex-basis: 32px;
+        font-size: 14px;
       }
 
       .brand-title h1 {
@@ -1030,6 +1055,7 @@
       .bio-text-inner {
         border-radius: 14px;
         padding: 18px 16px;
+        min-height: auto;
       }
 
       .bio-text-inner p {
@@ -1038,11 +1064,12 @@
       }
 
       .portrait-frame {
-        min-height: 178px;
+        min-height: 0;
+        aspect-ratio: 16 / 9;
       }
 
       .portrait-frame img {
-        max-height: 230px;
+        max-height: none;
       }
 
       .mourning-title {
@@ -1053,10 +1080,6 @@
         white-space: normal;
         font-size: 19px;
         letter-spacing: .06em;
-      }
-
-      .mourning-title span {
-        font-size: 12px;
       }
 
       .section-block {
@@ -1104,6 +1127,16 @@
 
       textarea {
         min-height: 132px;
+      }
+
+      .emoji-row {
+        gap: 7px;
+      }
+
+      .emoji-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 17px;
       }
 
       .upload-icons {
@@ -1154,6 +1187,11 @@
       .doc-actions {
         grid-column: 1 / -1;
         justify-content: flex-start;
+      }
+
+      .admin-bar-bottom {
+        padding: 0 12px 14px;
+        justify-content: flex-end;
       }
 
       .preview-modal {
@@ -1228,7 +1266,6 @@
             </div>
             <div class="mourning-title">
               <strong>沉痛哀悼及深切缅怀彭聃龄先生</strong>
-              <span>先生风范长存，学脉泽被后学</span>
             </div>
           </div>
 
@@ -1302,7 +1339,16 @@
             </div>
 
             <label for="messageText">缅怀正文 <span aria-hidden="true">*</span></label>
-            <textarea id="messageText" placeholder="写下您对彭老师的思念、感谢、追忆或祝福……"></textarea>
+            <textarea id="messageText" placeholder="写下您对彭老师的思念、感谢、追忆或祝福……可使用表情与 Emoji。"></textarea>
+
+            <div class="emoji-row" aria-label="常用表情">
+              <button class="emoji-btn" type="button" data-emoji="🕯️">🕯️</button>
+              <button class="emoji-btn" type="button" data-emoji="💐">💐</button>
+              <button class="emoji-btn" type="button" data-emoji="🙏">🙏</button>
+              <button class="emoji-btn" type="button" data-emoji="🌹">🌹</button>
+              <button class="emoji-btn" type="button" data-emoji="🤍">🤍</button>
+              <button class="emoji-btn" type="button" data-emoji="🖤">🖤</button>
+            </div>
           </div>
 
           <div class="form-row">
@@ -1336,10 +1382,6 @@
             <h3>亲友缅怀留言</h3>
             <span class="record-count" id="recordCount">共 0 条</span>
           </div>
-
-          <div class="admin-bar" aria-label="管理员操作区">
-            <button class="mini-btn ghost-btn" id="adminToggleBtn" type="button">管理员模式</button>
-          </div>
         </div>
 
         <div class="messages-list" id="messagesList">
@@ -1347,6 +1389,10 @@
         </div>
 
         <div class="pagination" id="pagination"></div>
+
+        <div class="admin-bar admin-bar-bottom" aria-label="管理员操作区">
+          <button class="mini-btn ghost-btn" id="adminToggleBtn" type="button">管理员模式</button>
+        </div>
       </section>
     </main>
 
@@ -1387,11 +1433,13 @@
     const PAGE_SIZE = 10;
     const FOLD_LIMIT = 200;
 
-    const SENSITIVE_PATTERNS = [
-      /色情|淫秽|黄色内容|裸聊|援交|嫖娼|约炮|成人服务/i,
-      /血腥|暴力威胁|恐怖袭击|爆炸物|杀人|砍人|纵火|自制武器/i,
-      /反动|煽动颠覆|分裂国家|极端组织|政治敏感|非法集会/i,
-      /辱骂|人身攻击|恶意诽谤/i
+    const BLOCKED_PATTERNS = [
+      /色情|淫秽|黄色|黄网|成人视频|成人内容|裸聊|裸露|援交|嫖娼|卖淫|约炮|性服务|成人视频|三级片|a片|av女优|色情网|成人视频/i,
+      /赌博|博彩|盘口|下注|赌球|私彩|六合彩/i,
+      /毒品|吸毒|贩毒|冰毒|海洛因|大麻|摇头丸|K粉|麻古/i,
+      /反动|颠覆|分裂国家|煽动|极端组织|恐怖组织|恐怖袭击|暴恐|邪教|非法集会|政治敏感/i,
+      /法轮功|台独|港独|藏独|疆独/i,
+      /辱骂|人身攻击|恶意诽谤|造谣|诅咒|去死|傻逼|垃圾人|畜生/i
     ];
 
     const isConfigured =
@@ -1426,8 +1474,7 @@
       previewBody: document.getElementById('previewBody'),
       previewDownload: document.getElementById('previewDownload'),
       previewClose: document.getElementById('previewClose'),
-      adminToggleBtn: document.getElementById('adminToggleBtn'),
-      adminState: document.getElementById('adminState')
+      adminToggleBtn: document.getElementById('adminToggleBtn')
     };
 
     let allComments = [];
@@ -1452,6 +1499,31 @@
       if (isConfigured) return true;
       showToast('请先在代码中填写 Supabase URL 和 Publishable key。', 'error');
       return false;
+    }
+
+    function normalizeRiskText(value) {
+      return String(value || '')
+        .normalize('NFKC')
+        .replace(/[\s\u200B-\u200D\uFEFF]/g, '')
+        .replace(/[^\p{L}\p{N}\u4e00-\u9fa5]/gu, '')
+        .toLowerCase();
+    }
+
+    function hasBlockedContent(value) {
+      const normalized = normalizeRiskText(value);
+      return BLOCKED_PATTERNS.some(pattern => pattern.test(normalized));
+    }
+
+    function commentHasBlockedContent(comment) {
+      const attachments = Array.isArray(comment.attachments) ? comment.attachments : [];
+      const attachmentNames = attachments.map(item => item.name || '').join(' ');
+      const combined = [
+        comment.visitor_name,
+        comment.visitor_relation,
+        comment.content,
+        attachmentNames
+      ].join(' ');
+      return hasBlockedContent(combined);
     }
 
     function getVisitorKey() {
@@ -1657,21 +1729,13 @@
       return { visitorName, visitorRelation, content };
     }
 
-    function normalizeForRiskCheck(value) {
-      return String(value || '')
-        .normalize('NFKC')
-        .replace(/\s+/g, '')
-        .toLowerCase();
-    }
-
     function passRiskCheck(checked) {
       const { images, docs } = selectedFiles();
       const fileNames = [...images, ...docs].map(file => file.name).join(' ');
-      const combined = normalizeForRiskCheck(`${checked.visitorName} ${checked.visitorRelation} ${checked.content} ${fileNames}`);
-      const blocked = SENSITIVE_PATTERNS.some(pattern => pattern.test(combined));
+      const combined = `${checked.visitorName} ${checked.visitorRelation} ${checked.content} ${fileNames}`;
 
-      if (blocked) {
-        showToast('评论内容包含敏感信息，无法发送', 'error');
+      if (hasBlockedContent(combined)) {
+        showToast('评论内容包含不适宜展示的信息，无法提交。', 'error');
         return false;
       }
 
@@ -1844,7 +1908,7 @@
         return;
       }
 
-      allComments = data || [];
+      allComments = (data || []).filter(comment => !commentHasBlockedContent(comment));
       renderComments();
     }
 
@@ -2217,6 +2281,19 @@
       localStorage.removeItem('memorial_reply_parent_name');
     }
 
+    function insertEmoji(emoji) {
+      const textarea = els.messageText;
+      const start = textarea.selectionStart ?? textarea.value.length;
+      const end = textarea.selectionEnd ?? textarea.value.length;
+      const before = textarea.value.slice(0, start);
+      const after = textarea.value.slice(end);
+      textarea.value = before + emoji + after;
+      const cursor = start + emoji.length;
+      textarea.setSelectionRange(cursor, cursor);
+      textarea.focus();
+      localStorage.setItem('memorial_draft_content', textarea.value);
+    }
+
     function bindDraftStorage() {
       els.visitorName.value = localStorage.getItem('memorial_visitor_name') || '';
       els.visitorRelation.value = localStorage.getItem('memorial_visitor_relation') || '';
@@ -2243,9 +2320,9 @@
       });
     }
 
-   function updateAdminUI() {
-  els.adminToggleBtn.textContent = adminMode ? '退出管理员模式' : '管理员模式';
-}
+    function updateAdminUI() {
+      els.adminToggleBtn.textContent = adminMode ? '退出管理员模式' : '管理员模式';
+    }
 
     function toggleAdminMode() {
       if (adminMode) {
@@ -2331,6 +2408,10 @@
       els.cancelReplyBtn.addEventListener('click', clearReply);
       els.adminToggleBtn.addEventListener('click', toggleAdminMode);
       els.previewClose.addEventListener('click', closePreview);
+
+      document.querySelectorAll('.emoji-btn').forEach(button => {
+        button.addEventListener('click', () => insertEmoji(button.dataset.emoji || ''));
+      });
 
       els.previewModal.addEventListener('click', event => {
         if (event.target === els.previewModal) closePreview();
