@@ -4,25 +4,27 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>彭聃龄先生线上缅怀室</title>
-  <meta name="description" content="彭聃龄先生线上缅怀室：浏览生平事迹，送花点烛，留言寄托哀思。" />
+  <meta name="description" content="彭聃龄先生线上缅怀室：浏览生平事迹、观看追忆影像，发表图文及文档留言，寄托哀思。" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     :root {
-      --bg-1: #111316;
-      --bg-2: #22252b;
-      --card: rgba(255, 255, 255, 0.08);
-      --card-strong: rgba(255, 255, 255, 0.13);
+      --bg-1: #090a0d;
+      --bg-2: #171a20;
+      --bg-3: #23262d;
+      --card: rgba(255, 255, 255, 0.075);
+      --card-strong: rgba(255, 255, 255, 0.125);
       --line: rgba(255, 255, 255, 0.16);
-      --text: #f5f1e8;
-      --muted: rgba(245, 241, 232, 0.72);
-      --soft: rgba(245, 241, 232, 0.58);
+      --line-soft: rgba(255, 255, 255, 0.09);
+      --text: #f6f2e8;
+      --muted: rgba(246, 242, 232, 0.72);
+      --soft: rgba(246, 242, 232, 0.56);
       --gold: #d9bc7d;
       --gold-2: #f1d69a;
-      --deep: #08090b;
-      --danger: #f1b7ad;
+      --danger: #f3b8ad;
       --ok: #b8d7c0;
-      --shadow: 0 24px 80px rgba(0, 0, 0, 0.32);
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.36);
+      --sticky-top: 0px;
     }
 
     * {
@@ -40,9 +42,9 @@
       color: var(--text);
       font-family: "Noto Serif SC", "Songti SC", "STSong", "Microsoft YaHei", serif;
       background:
-        radial-gradient(circle at 20% 10%, rgba(217, 188, 125, 0.12), transparent 30%),
-        radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.06), transparent 28%),
-        linear-gradient(135deg, var(--bg-1), var(--bg-2) 54%, #111113);
+        radial-gradient(circle at 15% 0%, rgba(217,188,125,0.12), transparent 28%),
+        radial-gradient(circle at 90% 8%, rgba(255,255,255,0.06), transparent 30%),
+        linear-gradient(145deg, var(--bg-1), var(--bg-2) 52%, #0d0f13 100%);
       overflow-x: hidden;
       position: relative;
     }
@@ -55,8 +57,9 @@
       background-image:
         linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
-      background-size: 46px 46px;
-      mask-image: linear-gradient(to bottom, black, transparent 96%);
+      background-size: 44px 44px;
+      mask-image: linear-gradient(to bottom, black, transparent 95%);
+      pointer-events: none;
     }
 
     body::after {
@@ -64,475 +67,448 @@
       position: fixed;
       inset: 0;
       z-index: -2;
-      background: linear-gradient(to bottom, rgba(0,0,0,.12), rgba(0,0,0,.54));
+      background: linear-gradient(to bottom, rgba(0,0,0,.12), rgba(0,0,0,.56));
       pointer-events: none;
     }
 
-    /* ===== 流星背景效果 ===== */
-    .meteor-layer {
+    .star-layer {
       position: fixed;
       inset: 0;
+      z-index: 0;
       pointer-events: none;
-      z-index: 2;
       overflow: hidden;
     }
 
-    .meteor {
+    .star {
       position: absolute;
-      width: 180px;
-      height: 2px;
+      width: 210px;
+      height: 3px;
       border-radius: 999px;
-      background: linear-gradient(
-        90deg,
-        rgba(255,255,255,0),
-        rgba(255,248,226,0.98)
-      );
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,.55) 42%, rgba(255,248,226,1) 100%);
       box-shadow:
-        0 0 8px rgba(255,255,255,0.95),
-        0 0 18px rgba(241,214,154,0.88),
-        0 0 32px rgba(217,188,125,0.46);
-      transform: rotate(-35deg);
+        0 0 10px rgba(255,255,255,.95),
+        0 0 22px rgba(241,214,154,.86),
+        0 0 42px rgba(217,188,125,.50);
       opacity: 0;
-      animation: meteor-fall 7s linear infinite;
+      transform: rotate(-32deg);
+      animation: starMove 8s linear infinite;
+      will-change: transform, opacity;
     }
 
-    .meteor::before {
+    .star::after {
       content: "";
       position: absolute;
       right: -2px;
       top: 50%;
-      width: 8px;
-      height: 8px;
+      width: 10px;
+      height: 10px;
       transform: translateY(-50%);
       border-radius: 50%;
-      background: rgba(255,255,255,0.98);
+      background: rgba(255,255,255,.98);
       box-shadow:
-        0 0 14px rgba(255,255,255,0.95),
-        0 0 22px rgba(241,214,154,0.85);
+        0 0 16px rgba(255,255,255,.96),
+        0 0 26px rgba(241,214,154,.92),
+        0 0 42px rgba(217,188,125,.58);
     }
 
-    .meteor-1 { top: 10%; left: 82%; animation-delay: 0s; animation-duration: 6.8s; }
-    .meteor-2 { top: 22%; left: 72%; animation-delay: 1.5s; animation-duration: 8.2s; }
-    .meteor-3 { top: 38%; left: 88%; animation-delay: 3.1s; animation-duration: 7.6s; }
-    .meteor-4 { top: 56%; left: 76%; animation-delay: 4.8s; animation-duration: 8.6s; }
-    .meteor-5 { top: 74%; left: 90%; animation-delay: 6.2s; animation-duration: 7.2s; }
-    .meteor-6 { top: 86%; left: 68%; animation-delay: 8s; animation-duration: 9s; }
+    .star-1 { top: 7%; left: 82%; animation-delay: 0s; animation-duration: 6.6s; }
+    .star-2 { top: 19%; left: 94%; animation-delay: 1.2s; animation-duration: 7.8s; }
+    .star-3 { top: 35%; left: 84%; animation-delay: 2.7s; animation-duration: 7.2s; }
+    .star-4 { top: 52%; left: 96%; animation-delay: 4.2s; animation-duration: 8.4s; }
+    .star-5 { top: 70%; left: 78%; animation-delay: 5.8s; animation-duration: 7.4s; }
+    .star-6 { top: 83%; left: 92%; animation-delay: 7.1s; animation-duration: 8.8s; }
+    .star-7 { top: 27%; left: 68%; animation-delay: 8.4s; animation-duration: 9.2s; }
+    .star-8 { top: 88%; left: 70%; animation-delay: 9.6s; animation-duration: 7.9s; }
 
-    @keyframes meteor-fall {
-      0% {
-        opacity: 0;
-        transform: translate(0, 0) rotate(-35deg);
-      }
-      8% {
-        opacity: .95;
-      }
-      42% {
-        opacity: .95;
-      }
-      100% {
-        opacity: 0;
-        transform: translate(-460px, 320px) rotate(-35deg);
-      }
+    @keyframes starMove {
+      0% { opacity: 0; transform: translate(0, 0) rotate(-32deg); }
+      8% { opacity: .96; }
+      38% { opacity: .96; }
+      100% { opacity: 0; transform: translate(-620px, 390px) rotate(-32deg); }
     }
 
     .page {
       width: min(1180px, calc(100% - 32px));
       margin: 0 auto;
-      padding: 22px 0 56px;
+      padding: 16px 0 56px;
       position: relative;
       z-index: 1;
     }
 
-    .topbar {
+    .sticky-tribute {
+      position: sticky;
+      top: var(--sticky-top);
+      z-index: 20;
+      padding-top: 10px;
+      margin-bottom: 22px;
+    }
+
+    .tribute-shell {
+      border: 1px solid var(--line);
+      border-radius: 30px;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.13), rgba(255,255,255,.055)),
+        radial-gradient(circle at 15% 15%, rgba(217,188,125,.12), transparent 32%);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      backdrop-filter: blur(18px);
+    }
+
+    .tribute-topline {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
-      padding: 10px 0 18px;
+      gap: 14px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--line-soft);
+      background: rgba(0,0,0,.18);
     }
 
     .brand {
       display: flex;
       align-items: center;
-      gap: 12px;
-      letter-spacing: 0.08em;
+      gap: 10px;
+      min-width: 0;
     }
 
     .brand-mark {
-      width: 42px;
-      height: 42px;
+      width: 38px;
+      height: 38px;
+      flex: 0 0 38px;
       display: grid;
       place-items: center;
-      border: 1px solid var(--line);
       border-radius: 50%;
+      border: 1px solid rgba(217,188,125,.38);
       color: var(--gold-2);
-      background: rgba(255,255,255,0.05);
-      box-shadow: 0 0 32px rgba(217, 188, 125, 0.08);
-      flex-shrink: 0;
+      background: rgba(255,255,255,.06);
+      letter-spacing: .08em;
     }
 
-    .brand h1 {
-      font-size: clamp(18px, 2vw, 26px);
+    .brand-title {
+      min-width: 0;
+    }
+
+    .brand-title h1 {
+      font-size: clamp(17px, 2vw, 25px);
       font-weight: 500;
-      line-height: 1.25;
       color: #fff8ea;
+      letter-spacing: .06em;
+      line-height: 1.2;
     }
 
-    .brand p {
+    .brand-title p {
       margin-top: 4px;
       color: var(--muted);
       font-size: 13px;
-      letter-spacing: 0.12em;
+      letter-spacing: .16em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .music-btn {
-      border: 1px solid var(--line);
+      border: 1px solid rgba(217,188,125,.34);
       background: rgba(255,255,255,0.08);
       color: var(--text);
-      min-width: 118px;
-      padding: 10px 14px;
+      min-width: 122px;
+      min-height: 42px;
+      padding: 9px 14px;
       border-radius: 999px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      transition: .25s ease;
+      transition: .22s ease;
       backdrop-filter: blur(14px);
       font-family: inherit;
-    }
-
-    .music-btn:hover {
-      border-color: rgba(217,188,125,.62);
-      transform: translateY(-1px);
-      box-shadow: 0 10px 28px rgba(0,0,0,.18);
-    }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-      margin-bottom: 18px;
-    }
-
-    .stat-card {
-      border: 1px solid var(--line);
-      border-radius: 24px;
-      padding: 18px 18px 16px;
-      background: linear-gradient(145deg, rgba(255,255,255,0.12), rgba(255,255,255,0.055));
-      box-shadow: 0 18px 46px rgba(0,0,0,0.16);
-      position: relative;
-      overflow: hidden;
-      min-height: 112px;
-      backdrop-filter: blur(10px);
-    }
-
-    .stat-card::after {
-      content: "";
-      position: absolute;
-      width: 120px;
-      height: 120px;
-      right: -40px;
-      top: -50px;
-      border-radius: 50%;
-      background: rgba(217,188,125,.08);
-    }
-
-    .stat-label {
-      color: var(--muted);
-      font-size: 14px;
-      letter-spacing: .08em;
-    }
-
-    .stat-number {
-      margin-top: 11px;
-      font-size: clamp(28px, 3.3vw, 44px);
-      color: var(--gold-2);
-      font-family: Georgia, "Times New Roman", serif;
-      line-height: 1;
-    }
-
-    .stat-note {
-      margin-top: 9px;
-      font-size: 12px;
-      color: var(--soft);
-    }
-
-    .hero {
-      min-height: 52vh;
-      display: grid;
-      grid-template-columns: minmax(260px, 0.9fr) minmax(320px, 1.35fr);
-      gap: 24px;
-      padding: 24px;
-      border: 1px solid var(--line);
-      border-radius: 34px;
-      background:
-        linear-gradient(115deg, rgba(255,255,255,.12), rgba(255,255,255,.05)),
-        radial-gradient(circle at 10% 20%, rgba(217,188,125,.11), transparent 32%);
-      box-shadow: var(--shadow);
-      overflow: hidden;
-      position: relative;
-      backdrop-filter: blur(12px);
-    }
-
-    .hero::before {
-      content: "先生千古 · 风范长存";
-      position: absolute;
-      right: -18px;
-      bottom: 16px;
-      color: rgba(255,255,255,0.045);
-      font-size: clamp(54px, 9vw, 112px);
-      font-weight: 700;
-      letter-spacing: .12em;
-      pointer-events: none;
       white-space: nowrap;
     }
 
-    .portrait-card {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 18px;
-      padding: 24px 18px;
-      border-radius: 28px;
-      border: 1px solid var(--line);
-      background: rgba(5,5,5,.18);
-      backdrop-filter: blur(18px);
+    .music-btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(217,188,125,.76);
+      box-shadow: 0 10px 28px rgba(0,0,0,.22);
+    }
+
+    .tribute-main {
+      display: grid;
+      grid-template-columns: minmax(180px, .72fr) minmax(320px, 1.35fr) minmax(180px, .72fr);
+      gap: 14px;
+      padding: 16px;
+      align-items: stretch;
+    }
+
+    .bio-side,
+    .portrait-landscape {
+      border-radius: 24px;
+      background: rgba(0,0,0,.18);
       overflow: hidden;
     }
 
-    .portrait-wrap {
-      width: min(245px, 64vw);
-      aspect-ratio: 4 / 5;
-      border-radius: 22px;
-      padding: 8px;
-      background: linear-gradient(145deg, rgba(217,188,125,.75), rgba(255,255,255,.18), rgba(217,188,125,.32));
-      box-shadow: 0 22px 60px rgba(0,0,0,.34);
-    }
-
-    .portrait-wrap img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center;
-      border-radius: 16px;
-      filter: grayscale(22%) contrast(1.02);
-      background: #222;
-    }
-
-    .person-name {
-      text-align: center;
-    }
-
-    .person-name h2 {
-      font-size: clamp(34px, 4.4vw, 58px);
-      font-weight: 500;
-      letter-spacing: .24em;
-      text-indent: .24em;
-      color: #fff9ed;
-    }
-
-    .years {
-      margin-top: 8px;
-      color: var(--gold-2);
-      font-size: 20px;
-      letter-spacing: .16em;
-      font-family: Georgia, "Times New Roman", serif;
-    }
-
-    .epitaph {
-      color: var(--muted);
-      font-size: 15px;
-      line-height: 1.85;
-      text-align: center;
-    }
-
-    .bio-panel {
+    .bio-side {
       position: relative;
+      padding: 20px 18px 20px 22px;
       display: flex;
       flex-direction: column;
       justify-content: center;
-      gap: 18px;
-      z-index: 1;
-      padding: 10px 4px;
+      min-height: 260px;
+      border-left: 3px solid rgba(217,188,125,.42);
+      background:
+        linear-gradient(135deg, rgba(217,188,125,.10), transparent 42%),
+        rgba(0,0,0,.18);
     }
 
-    .section-kicker {
+    .bio-side::before {
+      content: "";
+      position: absolute;
+      inset: 10px;
+      border-radius: 18px;
+      border: 1px solid rgba(217,188,125,.10);
+      pointer-events: none;
+    }
+
+    .bio-kicker {
       color: var(--gold-2);
-      font-size: 14px;
-      letter-spacing: .2em;
+      font-size: 13px;
+      letter-spacing: .18em;
+      margin-bottom: 10px;
     }
 
-    .bio-title {
-      font-size: clamp(26px, 3vw, 42px);
-      line-height: 1.25;
+    .bio-side h2 {
+      font-size: clamp(18px, 1.8vw, 25px);
       font-weight: 500;
+      color: #fff8ea;
+      line-height: 1.45;
       letter-spacing: .05em;
-      color: #fff9ed;
     }
 
-    .bio-text {
-      color: rgba(255,255,255,.84);
-      font-size: clamp(16px, 1.35vw, 19px);
-      line-height: 2.05;
-      max-width: 720px;
-      min-height: 126px;
+    .bio-side p {
+      margin-top: 12px;
+      color: rgba(255,255,255,.82);
+      font-size: 15px;
+      line-height: 1.9;
+      text-align: justify;
+    }
+
+    .portrait-landscape {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      min-height: 300px;
+      background:
+        linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.34)),
+        rgba(0,0,0,.28);
+    }
+
+    .portrait-frame {
+      flex: 1;
+      min-height: 232px;
+      display: grid;
+      place-items: center;
+      padding: 0;
+      background: rgba(0,0,0,.16);
+    }
+
+    .portrait-frame img {
+      width: 100%;
+      height: 100%;
+      max-height: 300px;
+      object-fit: contain;
+      object-position: center;
+      border: none;
+      border-radius: 0;
+      filter: grayscale(18%) contrast(1.02);
+      background: transparent;
+    }
+
+    .mourning-title {
+      padding: 13px 14px 15px;
+      text-align: center;
+      border-top: 1px solid var(--line-soft);
+      background: rgba(0,0,0,.22);
+    }
+
+    .mourning-title strong {
+      display: block;
+      font-weight: 500;
+      font-size: clamp(19px, 2vw, 28px);
+      letter-spacing: .12em;
+      color: #fff8ea;
+      line-height: 1.4;
+    }
+
+    .mourning-title span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      letter-spacing: .12em;
     }
 
     .bio-dots {
       display: flex;
-      gap: 9px;
-      align-items: center;
-      margin-top: 2px;
-      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 16px 14px;
     }
 
     .dot {
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      border: 1px solid rgba(255,255,255,.34);
+      width: 8px;
+      height: 8px;
+      border: 1px solid rgba(255,255,255,.38);
       background: transparent;
+      border-radius: 999px;
       cursor: pointer;
-      transition: .25s ease;
+      transition: .22s ease;
     }
 
     .dot.active {
-      width: 30px;
-      border-radius: 999px;
+      width: 28px;
       border-color: var(--gold-2);
       background: var(--gold-2);
-      box-shadow: 0 0 18px rgba(217,188,125,.36);
+      box-shadow: 0 0 18px rgba(217,188,125,.38);
     }
 
-    .quote-section {
+    .setup-warning {
+      display: none;
+      margin-bottom: 18px;
+      padding: 14px 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(241,183,173,.35);
+      background: rgba(241,183,173,.11);
+      color: #ffe0dc;
+      line-height: 1.75;
+      font-size: 14px;
+    }
+
+    .setup-warning.show {
+      display: block;
+    }
+
+    .section-block {
+      position: relative;
       margin-top: 22px;
-    }
-
-    .panel,
-    .quote-card {
       border: 1px solid var(--line);
       border-radius: 30px;
       background: linear-gradient(145deg, rgba(255,255,255,.105), rgba(255,255,255,.045));
-      box-shadow: 0 18px 52px rgba(0,0,0,.18);
+      box-shadow: 0 18px 52px rgba(0,0,0,.20);
       backdrop-filter: blur(16px);
       overflow: hidden;
+      animation: sectionFadeIn .58s ease both;
     }
 
-    .quote-card {
-      padding: 28px 24px;
-      background:
-        linear-gradient(145deg, rgba(255,255,255,.095), rgba(255,255,255,.035)),
-        radial-gradient(circle at 12% 0%, rgba(217,188,125,.10), transparent 28%);
+    .section-block::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(217,188,125,.48), transparent);
+      opacity: .7;
+      pointer-events: none;
     }
 
-    .quote-title-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-      margin-bottom: 22px;
+    @keyframes sectionFadeIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    .quote-title-left {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .quote-icon {
-      font-size: 24px;
-      line-height: 1;
-      color: var(--gold-2);
-      flex-shrink: 0;
-    }
-
-    .quote-title-row h2 {
-      font-size: 22px;
-      font-weight: 500;
-      letter-spacing: .08em;
-      color: #fff8e8;
-    }
-
-    .quote-list {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-
-    .quote-item {
-      display: grid;
-      grid-template-columns: 26px 1fr;
-      gap: 12px;
-      padding: 12px 0 12px 10px;
-      border-left: 2px solid rgba(217,188,125,.16);
-    }
-
-    .quote-mark {
-      color: rgba(241,214,154,.62);
-      font-size: 32px;
-      line-height: 1;
-      font-family: Georgia, "Times New Roman", serif;
-    }
-
-    .quote-text {
-      color: rgba(255,255,255,.82);
-      font-size: 18px;
-      line-height: 1.9;
-      font-style: italic;
-    }
-
-    .quote-source {
-      margin-top: 8px;
-      color: rgba(255,255,255,.44);
-      font-size: 14px;
-      line-height: 1.6;
-    }
-
-    .main-area {
-      display: grid;
-      grid-template-columns: minmax(280px, 0.82fr) minmax(340px, 1.18fr);
-      gap: 22px;
-      margin-top: 22px;
-      align-items: start;
-    }
-
-    .panel-header {
+    .section-header {
       padding: 20px 22px 14px;
-      border-bottom: 1px solid rgba(255,255,255,.12);
+      border-bottom: 1px solid var(--line-soft);
     }
 
-    .panel-title-row {
+    .section-title-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 14px;
     }
 
-    .panel-header h3 {
-      font-size: 20px;
+    .section-header h2,
+    .section-header h3 {
+      font-size: 21px;
       font-weight: 500;
-      letter-spacing: .08em;
       color: #fff8ea;
+      letter-spacing: .08em;
     }
 
-    .record-count {
-      color: var(--soft);
-      font-size: 13px;
-      white-space: nowrap;
-    }
-
-    .panel-header p {
+    .section-header p {
       margin-top: 8px;
       color: var(--muted);
+      font-size: 13px;
+      line-height: 1.75;
+    }
+
+    .memory-video-wrap {
+      padding: 18px;
+    }
+
+    .memory-video-frame {
+      position: relative;
+      overflow: hidden;
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at 18% 0%, rgba(217,188,125,.12), transparent 30%),
+        rgba(0,0,0,.30);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.09);
+    }
+
+    .memory-video {
+      display: block;
+      width: 100%;
+      max-height: 72vh;
+      aspect-ratio: 16 / 9;
+      object-fit: contain;
+      background: rgba(0,0,0,.55);
+    }
+
+    .video-meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 12px;
+      color: var(--soft);
       font-size: 13px;
       line-height: 1.7;
     }
 
+    .admin-bar {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .admin-state {
+      color: var(--soft);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .danger-btn {
+      border-color: rgba(241,183,173,.44) !important;
+      color: #ffe0dc !important;
+      background: rgba(241,183,173,.08) !important;
+    }
+
+    .comments-layout {
+      display: grid;
+      grid-template-columns: minmax(300px, .86fr) minmax(360px, 1.14fr);
+      gap: 20px;
+      align-items: start;
+      margin-top: 22px;
+    }
+
     .form-body {
       padding: 20px 22px 22px;
+    }
+
+    .form-row + .form-row {
+      margin-top: 16px;
     }
 
     label {
@@ -544,11 +520,12 @@
     }
 
     input[type="text"],
+    select,
     textarea {
       width: 100%;
       border: 1px solid rgba(255,255,255,.16);
       border-radius: 18px;
-      background: rgba(0,0,0,.22);
+      background: rgba(0,0,0,.24);
       color: var(--text);
       padding: 13px 15px;
       outline: none;
@@ -557,53 +534,89 @@
       font-size: 15px;
     }
 
+    select {
+      color-scheme: dark;
+      cursor: pointer;
+    }
+
     input[type="text"]:focus,
+    select:focus,
     textarea:focus {
       border-color: rgba(217,188,125,.68);
       box-shadow: 0 0 0 4px rgba(217,188,125,.08);
     }
 
     textarea {
-      min-height: 116px;
+      min-height: 170px;
       resize: vertical;
       line-height: 1.8;
+      white-space: pre-wrap;
     }
 
-    .form-row + .form-row {
-      margin-top: 16px;
+    .relation-row {
+      display: none;
     }
 
-    .quick-actions {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin-top: 16px;
+    .relation-row.show {
+      display: block;
     }
 
-    .action-btn,
+    .reply-target {
+      display: none;
+      margin-bottom: 12px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(217,188,125,.26);
+      background: rgba(217,188,125,.10);
+      color: #fff3d2;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .reply-target.show {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .mini-btn,
     .submit-btn,
     .file-label {
-      position: relative;
-      overflow: hidden;
       border: 1px solid rgba(217,188,125,.42);
       color: #fff8e8;
-      background: linear-gradient(135deg, rgba(217,188,125,.27), rgba(255,255,255,.08));
-      min-height: 50px;
-      border-radius: 18px;
-      padding: 12px 14px;
+      background: linear-gradient(135deg, rgba(217,188,125,.25), rgba(255,255,255,.08));
+      min-height: 46px;
+      border-radius: 16px;
+      padding: 10px 14px;
       cursor: pointer;
-      transition: .25s ease;
+      transition: .22s ease;
       font-family: inherit;
       font-size: 15px;
-      letter-spacing: .04em;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
       user-select: none;
+      text-decoration: none;
     }
 
-    .action-btn:hover,
+    .mini-btn {
+      min-height: 34px;
+      padding: 6px 10px;
+      font-size: 13px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+    }
+
+    .submit-btn {
+      width: 100%;
+      margin-top: 14px;
+      min-height: 52px;
+      background: linear-gradient(135deg, rgba(217,188,125,.32), rgba(217,188,125,.12));
+    }
+
+    .mini-btn:hover,
     .submit-btn:hover,
     .file-label:hover {
       transform: translateY(-1px);
@@ -611,81 +624,47 @@
       box-shadow: 0 14px 36px rgba(0,0,0,.22), 0 0 28px rgba(217,188,125,.08);
     }
 
-    .submit-btn {
-      width: 100%;
-      margin-top: 12px;
-      background: linear-gradient(135deg, rgba(217,188,125,.32), rgba(217,188,125,.12));
+    .ghost-btn {
+      border-color: rgba(255,255,255,.18);
+      background: rgba(255,255,255,.055);
+      color: var(--muted);
     }
 
-    .file-line {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-      margin-top: 10px;
+    .loading {
+      opacity: .68;
+      pointer-events: none;
     }
 
     input[type="file"] {
       display: none;
     }
 
-    .file-name {
-      min-height: 22px;
+    .upload-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .file-info {
+      margin-top: 8px;
       color: var(--soft);
-      font-size: 13px;
-      line-height: 1.6;
-      word-break: break-all;
-    }
-
-    .ripple {
-      position: absolute;
-      border-radius: 50%;
-      transform: scale(0);
-      animation: ripple .75s ease-out;
-      background: rgba(255,255,255,.32);
-      pointer-events: none;
-    }
-
-    @keyframes ripple {
-      to {
-        transform: scale(4.8);
-        opacity: 0;
-      }
-    }
-
-    .glow {
-      animation: glow .82s ease;
-    }
-
-    @keyframes glow {
-      0% { box-shadow: 0 0 0 rgba(217,188,125,0); }
-      45% { box-shadow: 0 0 36px rgba(217,188,125,.48); }
-      100% { box-shadow: 0 0 0 rgba(217,188,125,0); }
-    }
-
-    .float-emoji {
-      position: fixed;
-      z-index: 50;
-      pointer-events: none;
-      font-size: 28px;
-      animation: floatUp 1.35s ease-out forwards;
-      filter: drop-shadow(0 10px 18px rgba(0,0,0,.28));
-    }
-
-    @keyframes floatUp {
-      0% { transform: translate(-50%, 0) scale(.8); opacity: 0; }
-      18% { opacity: 1; }
-      100% { transform: translate(-50%, -96px) scale(1.45); opacity: 0; }
+      font-size: 12px;
+      line-height: 1.7;
+      word-break: break-word;
     }
 
     .messages-panel {
-      min-height: 460px;
+      min-height: 560px;
+    }
+
+    .record-count {
+      color: var(--soft);
+      font-size: 13px;
+      white-space: nowrap;
     }
 
     .messages-list {
       padding: 16px;
-      max-height: 700px;
-      overflow-y: auto;
-      scrollbar-width: thin;
     }
 
     .empty-state {
@@ -698,16 +677,19 @@
       margin: 6px;
     }
 
-    .record {
-      display: grid;
-      grid-template-columns: 44px 1fr;
-      gap: 12px;
-      padding: 15px;
+    .comment-card {
       border: 1px solid rgba(255,255,255,.12);
       border-radius: 22px;
       background: rgba(0,0,0,.16);
+      padding: 15px;
       margin-bottom: 12px;
-      animation: fadeIn .28s ease;
+      animation: fadeIn .25s ease;
+    }
+
+    .reply-card {
+      margin-left: 34px;
+      background: rgba(255,255,255,.045);
+      border-left: 2px solid rgba(217,188,125,.28);
     }
 
     @keyframes fadeIn {
@@ -715,30 +697,34 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    .record-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      background: rgba(217,188,125,.13);
-      border: 1px solid rgba(217,188,125,.24);
-      font-size: 20px;
-    }
-
-    .record-meta {
+    .comment-meta {
       display: flex;
       justify-content: space-between;
-      gap: 10px;
+      gap: 12px;
       align-items: baseline;
-      margin-bottom: 6px;
+      margin-bottom: 9px;
     }
 
-    .visitor {
+    .visitor-name {
       color: #fff8e8;
       font-size: 16px;
       font-weight: 600;
       letter-spacing: .03em;
+    }
+
+    .relation-badge {
+      display: inline-flex;
+      align-items: center;
+      margin-left: 8px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(217,188,125,.28);
+      color: var(--gold-2);
+      background: rgba(217,188,125,.09);
+      font-size: 12px;
+      font-weight: 400;
+      letter-spacing: .04em;
+      vertical-align: middle;
     }
 
     .time {
@@ -748,36 +734,147 @@
       font-family: "Microsoft YaHei", sans-serif;
     }
 
-    .record-text {
-      color: rgba(255,255,255,.82);
-      line-height: 1.85;
+    .comment-content {
+      color: rgba(255,255,255,.84);
+      line-height: 1.86;
       font-size: 15px;
       word-break: break-word;
       white-space: pre-wrap;
     }
 
-    .record-img {
-      display: block;
-      width: min(100%, 360px);
-      max-height: 280px;
-      object-fit: cover;
-      margin-top: 10px;
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,.13);
+    .comment-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .attachments {
+      display: grid;
+      gap: 12px;
+      margin-top: 13px;
+    }
+
+    .image-gallery {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .thumb {
+      position: relative;
+      aspect-ratio: 4 / 3;
+      overflow: hidden;
+      border-radius: 15px;
+      border: 1px solid rgba(255,255,255,.12);
       background: rgba(0,0,0,.22);
+      cursor: pointer;
+    }
+
+    .thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform .25s ease;
+    }
+
+    .thumb:hover img {
+      transform: scale(1.035);
+    }
+
+    .doc-list {
+      display: grid;
+      gap: 9px;
+    }
+
+    .doc-item {
+      display: grid;
+      grid-template-columns: 38px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 10px;
+      border-radius: 15px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+    }
+
+    .doc-icon {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      border: 1px solid rgba(217,188,125,.24);
+      background: rgba(217,188,125,.10);
+      color: var(--gold-2);
+      font-size: 18px;
+    }
+
+    .doc-name {
+      color: rgba(255,255,255,.86);
+      font-size: 14px;
+      line-height: 1.45;
+      word-break: break-word;
+    }
+
+    .doc-size {
+      margin-top: 2px;
+      color: var(--soft);
+      font-size: 12px;
+      font-family: "Microsoft YaHei", sans-serif;
+    }
+
+    .doc-actions {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 0 16px 18px;
+    }
+
+    .page-btn {
+      min-width: 36px;
+      height: 36px;
+      padding: 0 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      cursor: pointer;
+      font-family: inherit;
+      transition: .22s ease;
+    }
+
+    .page-btn.active {
+      border-color: var(--gold-2);
+      background: rgba(217,188,125,.24);
+      color: #fff8ea;
+    }
+
+    .page-btn:disabled {
+      opacity: .45;
+      cursor: not-allowed;
     }
 
     .toast {
       position: fixed;
       left: 50%;
-      bottom: 26px;
+      bottom: 24px;
       transform: translateX(-50%) translateY(20px);
       z-index: 100;
-      width: min(520px, calc(100% - 32px));
+      width: min(560px, calc(100% - 32px));
       padding: 13px 16px;
       border-radius: 18px;
       border: 1px solid rgba(255,255,255,.14);
-      background: rgba(16,17,19,.88);
+      background: rgba(16,17,19,.9);
       color: var(--text);
       backdrop-filter: blur(18px);
       box-shadow: 0 18px 60px rgba(0,0,0,.34);
@@ -794,64 +891,112 @@
       transform: translateX(-50%) translateY(0);
     }
 
-    .setup-warning {
+    .preview-modal {
       display: none;
-      margin: 0 0 18px;
-      padding: 14px 16px;
-      border-radius: 18px;
-      border: 1px solid rgba(241,183,173,.35);
-      background: rgba(241,183,173,.11);
-      color: #ffe0dc;
-      line-height: 1.75;
-      font-size: 14px;
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      padding: 24px;
+      background: rgba(0,0,0,.72);
+      backdrop-filter: blur(10px);
     }
 
-    .setup-warning.show {
-      display: block;
+    .preview-modal.show {
+      display: grid;
+      place-items: center;
+    }
+
+    .preview-card {
+      width: min(1060px, 100%);
+      max-height: min(88vh, 820px);
+      display: flex;
+      flex-direction: column;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 24px;
+      background: rgba(16,17,19,.96);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .preview-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line-soft);
+    }
+
+    .preview-title {
+      font-size: 15px;
+      color: #fff8ea;
+      line-height: 1.4;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .preview-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .preview-body {
+      min-height: 420px;
+      height: 72vh;
+      max-height: 700px;
+      display: grid;
+      place-items: center;
+      background: rgba(0,0,0,.36);
+    }
+
+    .preview-body img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .preview-body iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: #fff;
     }
 
     .footer {
       text-align: center;
       color: var(--soft);
       font-size: 13px;
-      line-height: 1.8;
+      line-height: 1.9;
       margin-top: 34px;
       letter-spacing: .06em;
     }
 
-    .loading {
-      opacity: .65;
-      pointer-events: none;
-    }
-
-    @media (max-width: 900px) {
+    @media (max-width: 980px) {
       .page {
-        width: min(100% - 28px, 1180px);
+        width: min(100% - 26px, 1180px);
       }
 
-      .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .hero {
+      .tribute-main {
         grid-template-columns: 1fr;
-        min-height: auto;
-        gap: 18px;
       }
 
-      .portrait-card {
+      .bio-side {
         min-height: auto;
       }
 
-      .bio-panel {
-        padding: 2px 0 6px;
+      .portrait-landscape {
+        min-height: auto;
+        order: -1;
       }
 
-      .bio-text {
-        min-height: 150px;
+      .portrait-frame {
+        min-height: 240px;
       }
 
-      .main-area {
+      .comments-layout {
         grid-template-columns: 1fr;
       }
     }
@@ -859,287 +1004,151 @@
     @media (max-width: 640px) {
       body {
         background:
-          radial-gradient(circle at 20% 5%, rgba(217, 188, 125, 0.10), transparent 28%),
-          radial-gradient(circle at 85% 0%, rgba(255,255,255,0.04), transparent 25%),
-          linear-gradient(160deg, #0d0f12 0%, #171a20 58%, #0c0e11 100%);
+          radial-gradient(circle at 20% 5%, rgba(217,188,125,0.11), transparent 30%),
+          radial-gradient(circle at 86% 0%, rgba(255,255,255,0.045), transparent 24%),
+          linear-gradient(160deg, #0c0e11, #171a20 60%, #0a0c0f 100%);
       }
 
-      body::before {
-        opacity: 1;
-      }
-
-      body::after {
-        background: linear-gradient(to bottom, rgba(0,0,0,.16), rgba(0,0,0,.52));
-      }
-
-      .meteor {
-        width: 135px;
+      .star {
+        width: 150px;
         height: 3px;
-        background: linear-gradient(
-          90deg,
-          rgba(255,255,255,0),
-          rgba(205,154,54,0.96)
-        );
-        box-shadow:
-          0 0 10px rgba(255,255,255,0.9),
-          0 0 20px rgba(205,154,54,0.95),
-          0 0 34px rgba(205,154,54,0.52);
       }
-
-      .meteor::before {
-        width: 9px;
-        height: 9px;
-        background: rgba(255,246,220,1);
-        box-shadow:
-          0 0 10px rgba(255,255,255,0.96),
-          0 0 18px rgba(205,154,54,0.95);
-      }
-
-      .meteor-1 { top: 18%; left: 83%; animation-duration: 6.4s; }
-      .meteor-2 { top: 32%; left: 93%; animation-duration: 7.6s; }
-      .meteor-3 { top: 48%; left: 80%; animation-duration: 7.2s; }
-      .meteor-4 { top: 62%; left: 92%; animation-duration: 8.2s; }
-      .meteor-5 { top: 77%; left: 84%; animation-duration: 6.9s; }
-      .meteor-6 { top: 90%; left: 95%; animation-duration: 8.8s; }
 
       .page {
-        width: min(100% - 18px, 1180px);
-        padding: 10px 0 38px;
+        width: min(100% - 16px, 1180px);
+        padding: 8px 0 38px;
       }
 
-      .topbar {
-        align-items: stretch;
+      .sticky-tribute {
+        padding-top: 6px;
+        margin-bottom: 14px;
+      }
+
+      .tribute-shell,
+      .section-block {
+        border-radius: 22px;
+      }
+
+      .tribute-topline {
         flex-direction: column;
+        align-items: stretch;
         gap: 10px;
-        padding-bottom: 12px;
-      }
-
-      .brand {
-        gap: 10px;
+        padding: 12px;
       }
 
       .brand-mark {
-        width: 36px;
-        height: 36px;
-        flex: 0 0 36px;
-        font-size: 14px;
+        width: 34px;
+        height: 34px;
+        flex-basis: 34px;
       }
 
-      .brand h1 {
-        font-size: 20px;
-        letter-spacing: .03em;
+      .brand-title h1 {
+        font-size: 19px;
       }
 
-      .brand p {
+      .brand-title p {
         font-size: 12px;
-        letter-spacing: .08em;
       }
 
       .music-btn {
         width: 100%;
-        min-height: 42px;
-        padding: 9px 12px;
-        background: rgba(255,255,255,0.06);
+        min-height: 40px;
       }
 
-      .setupWarning {
-        margin-bottom: 12px;
-        border-radius: 16px;
-        font-size: 13px;
-      }
-
-      .stats-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 9px;
-        margin-bottom: 12px;
-      }
-
-      .stat-card {
-        min-height: 92px;
-        border-radius: 18px;
-        padding: 13px 12px 12px;
-        background: linear-gradient(145deg, rgba(255,255,255,0.11), rgba(255,255,255,0.04));
-      }
-
-      .stat-card::after {
-        width: 86px;
-        height: 86px;
-        right: -34px;
-        top: -38px;
-      }
-
-      .stat-label {
-        font-size: 12px;
-        letter-spacing: .04em;
-      }
-
-      .stat-number {
-        margin-top: 8px;
-        font-size: 30px;
-      }
-
-      .stat-note {
-        margin-top: 7px;
-        font-size: 11px;
-      }
-
-      .hero,
-      .panel,
-      .quote-card {
-        border-radius: 22px;
-      }
-
-      .hero {
-        padding: 13px;
-        gap: 14px;
-        background:
-          linear-gradient(115deg, rgba(255,255,255,.11), rgba(255,255,255,.045)),
-          radial-gradient(circle at 10% 20%, rgba(217,188,125,.12), transparent 32%);
-      }
-
-      .hero::before {
-        display: none;
-      }
-
-      .portrait-card {
-        padding: 16px 12px;
-        gap: 13px;
-        border-radius: 20px;
-        background: rgba(10,10,10,.22);
-      }
-
-      .portrait-wrap {
-        width: min(58vw, 210px);
-        padding: 6px;
-        border-radius: 18px;
-      }
-
-      .portrait-wrap img {
-        border-radius: 13px;
-      }
-
-      .person-name h2 {
-        font-size: 34px;
-        letter-spacing: .16em;
-        text-indent: .16em;
-        color: #fff9ed;
-      }
-
-      .years {
-        margin-top: 6px;
-        font-size: 17px;
-      }
-
-      .epitaph {
-        font-size: 14px;
-        line-height: 1.7;
-        color: rgba(245,241,232,.82);
-      }
-
-      .bio-panel {
+      .tribute-main {
+        padding: 10px;
         gap: 10px;
-        padding: 2px 2px 4px;
       }
 
-      .section-kicker {
-        font-size: 12px;
+      .bio-side,
+      .portrait-landscape {
+        border-radius: 18px;
       }
 
-      .bio-title {
-        font-size: 23px;
-        line-height: 1.35;
+      .bio-side {
+        padding: 13px 12px;
       }
 
-      .bio-text {
-        min-height: auto;
-        font-size: 15px;
-        line-height: 1.9;
-      }
-
-      .bio-dots {
-        gap: 8px;
-        padding-top: 2px;
-      }
-
-      .dot {
-        width: 8px;
-        height: 8px;
-      }
-
-      .dot.active {
-        width: 26px;
-      }
-
-      .quote-section {
-        margin-top: 14px;
-      }
-
-      .quote-card {
-        padding: 20px 16px;
-        background:
-          linear-gradient(145deg, rgba(255,255,255,.10), rgba(255,255,255,.035)),
-          radial-gradient(circle at 12% 0%, rgba(217,188,125,.10), transparent 28%);
-      }
-
-      .quote-title-row {
-        align-items: flex-start;
-        flex-direction: column;
-        gap: 8px;
-        margin-bottom: 14px;
-      }
-
-      .quote-title-row h2 {
-        font-size: 20px;
-        color: #fff8e8;
-      }
-
-      .quote-item {
-        grid-template-columns: 22px 1fr;
-        gap: 8px;
-        padding: 10px 0 10px 8px;
-      }
-
-      .quote-mark {
-        font-size: 28px;
-      }
-
-      .quote-text {
-        font-size: 16px;
-        line-height: 1.85;
-        color: rgba(255,255,255,.90);
-      }
-
-      .quote-source {
-        font-size: 13px;
-        color: rgba(255,255,255,.56);
-      }
-
-      .main-area {
-        gap: 14px;
-        margin-top: 14px;
-      }
-
-      .panel-header {
-        padding: 16px 16px 12px;
-      }
-
-      .panel-header h3 {
+      .bio-side h2 {
         font-size: 18px;
       }
 
-      .panel-header p {
+      .bio-side p {
+        margin-top: 8px;
+        font-size: 13px;
+        line-height: 1.75;
+      }
+
+      .bio-kicker {
         font-size: 12px;
+        margin-bottom: 7px;
+      }
+
+      .portrait-frame {
+        min-height: 178px;
+        padding: 0;
+      }
+
+      .portrait-frame img {
+        max-height: 230px;
+        border-radius: 0;
+      }
+
+      .mourning-title {
+        padding: 11px 10px 12px;
+      }
+
+      .mourning-title strong {
+        font-size: 19px;
+        letter-spacing: .08em;
+      }
+
+      .mourning-title span {
+        font-size: 12px;
+      }
+
+      .section-block {
+        margin-top: 14px;
+      }
+
+      .section-header {
+        padding: 16px 16px 12px;
+      }
+
+      .section-header h2,
+      .section-header h3 {
+        font-size: 18px;
+      }
+
+      .memory-video-wrap {
+        padding: 12px;
+      }
+
+      .memory-video-frame {
+        border-radius: 18px;
+      }
+
+      .memory-video {
+        aspect-ratio: 16 / 9;
+        max-height: 56vh;
+      }
+
+      .video-meta-row {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .comments-layout {
+        gap: 14px;
+        margin-top: 14px;
       }
 
       .form-body {
         padding: 16px;
       }
 
-      label {
-        font-size: 13px;
-      }
-
       input[type="text"],
+      select,
       textarea {
         border-radius: 15px;
         padding: 12px 13px;
@@ -1147,289 +1156,245 @@
       }
 
       textarea {
-        min-height: 104px;
+        min-height: 132px;
       }
 
-      .quick-actions {
-        grid-template-columns: 1fr 1fr;
-        gap: 9px;
-      }
-
-      .action-btn,
-      .submit-btn,
-      .file-label {
-        min-height: 46px;
-        border-radius: 15px;
-        padding: 10px 11px;
-        font-size: 14px;
-      }
-
-      .messages-panel {
-        min-height: auto;
+      .upload-grid {
+        grid-template-columns: 1fr;
       }
 
       .messages-list {
         padding: 12px;
-        max-height: none;
-        overflow-y: visible;
       }
 
-      .empty-state {
-        padding: 32px 14px;
+      .comment-card {
         border-radius: 18px;
-        font-size: 14px;
-      }
-
-      .record {
-        grid-template-columns: 36px 1fr;
-        gap: 10px;
         padding: 12px;
-        border-radius: 18px;
       }
 
-      .record-icon {
-        width: 36px;
-        height: 36px;
-        font-size: 18px;
+      .reply-card {
+        margin-left: 14px;
       }
 
-      .record-meta {
+      .comment-meta {
         display: block;
-      }
-
-      .visitor {
-        font-size: 15px;
       }
 
       .time {
         display: block;
-        margin-top: 3px;
-        font-size: 11px;
+        margin-top: 4px;
       }
 
-      .record-text {
-        font-size: 14px;
-        line-height: 1.75;
+      .image-gallery {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
-      .record-img {
+      .doc-item {
+        grid-template-columns: 34px 1fr;
+      }
+
+      .doc-actions {
+        grid-column: 1 / -1;
+        justify-content: flex-start;
+      }
+
+      .preview-modal {
+        padding: 12px;
+      }
+
+      .preview-card {
+        border-radius: 18px;
+      }
+
+      .preview-head {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .preview-actions {
         width: 100%;
-        max-height: 260px;
-        border-radius: 14px;
+      }
+
+      .preview-actions .mini-btn {
+        flex: 1;
+      }
+
+      .preview-body {
+        min-height: 300px;
+        height: 66vh;
       }
 
       .toast {
         bottom: 18px;
-        width: min(92vw, 520px);
+        width: min(92vw, 560px);
         border-radius: 15px;
-      }
-
-      .footer {
-        margin-top: 24px;
-        font-size: 12px;
-      }
-    }
-
-    @media (max-width: 380px) {
-      .stats-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .quick-actions {
-        grid-template-columns: 1fr;
-      }
-
-      .portrait-wrap {
-        width: min(68vw, 200px);
-      }
-
-      .person-name h2 {
-        font-size: 31px;
       }
     }
   </style>
 </head>
 <body>
-  <!-- 流星背景 -->
-  <div class="meteor-layer" aria-hidden="true">
-    <span class="meteor meteor-1"></span>
-    <span class="meteor meteor-2"></span>
-    <span class="meteor meteor-3"></span>
-    <span class="meteor meteor-4"></span>
-    <span class="meteor meteor-5"></span>
-    <span class="meteor meteor-6"></span>
+  <div class="star-layer" aria-hidden="true">
+    <span class="star star-1"></span>
+    <span class="star star-2"></span>
+    <span class="star star-3"></span>
+    <span class="star star-4"></span>
+    <span class="star star-5"></span>
   </div>
 
-  <audio id="bgm" src="./assets/secret-garden-piano.mp3" preload="auto" loop></audio>
+  <audio id="bgm" src="./assets/带着钢琴去旅行 - 神秘园之歌-钢琴曲.mp3" preload="auto" loop></audio>
 
   <div class="page">
-    <header class="topbar">
-      <div class="brand">
-        <div class="brand-mark">悼</div>
-        <div>
-          <h1>彭聃龄先生线上缅怀室</h1>
-          <p>深切缅怀 · 永志师恩</p>
+    <section class="sticky-tribute" aria-label="顶部吸顶展示区">
+      <div class="tribute-shell">
+        <div class="tribute-topline">
+          <div class="brand">
+            <div class="brand-mark">悼</div>
+            <div class="brand-title">
+              <h1>彭聃龄先生线上缅怀室</h1>
+              <p>沉痛哀悼 · 深切缅怀</p>
+            </div>
+          </div>
+          <button class="music-btn" id="musicToggle" type="button" aria-label="背景音乐播放暂停">
+            <span id="musicIcon">♪</span><span id="musicText">开启音乐</span>
+          </button>
         </div>
-      </div>
-      <button class="music-btn" id="musicToggle" type="button" aria-label="音乐开关">
-        <span id="musicIcon">♪</span><span id="musicText">音乐开启</span>
-      </button>
-    </header>
 
-    <div class="setup-warning" id="setupWarning">
-      当前还没有填写 Supabase URL 和 Publishable key。请先完成后端配置，否则送花、点烛、留言和图片上传不能保存。
-    </div>
+        <div class="tribute-main">
+          <aside class="bio-side" id="bioLeft" aria-label="生平事迹左侧摘要"></aside>
 
-    <section class="stats-grid" aria-label="缅怀统计">
-      <div class="stat-card">
-        <div class="stat-label">送鲜花总数量</div>
-        <div class="stat-number" id="flowerCount">0</div>
-        <div class="stat-note">所有访客累计送花</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">点蜡烛总数量</div>
-        <div class="stat-number" id="candleCount">0</div>
-        <div class="stat-note">所有访客累计点烛</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">今日吊唁人数</div>
-        <div class="stat-number" id="todayVisitors">0</div>
-        <div class="stat-note">今日独立访客数</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">累计吊唁人数</div>
-        <div class="stat-number" id="totalVisitors">0</div>
-        <div class="stat-note">上线以来独立访客数</div>
-      </div>
-    </section>
+          <div class="portrait-landscape">
+            <div class="portrait-frame">
+              <img id="portraitImage" src="./assets/2.jpg" alt="彭聃龄先生遗照" />
+            </div>
+            <div class="mourning-title">
+              <strong>沉痛哀悼及深切缅怀彭聃龄先生</strong>
+              <span>先生风范长存，学脉泽被后学</span>
+            </div>
+          </div>
 
-    <section class="hero" aria-label="人物遗照与生平事迹">
-      <div class="portrait-card">
-        <div class="portrait-wrap">
-          <img src="./assets/微信图片_20260506095430_32_1763.jpg" alt="彭聃龄先生遗照" />
+          <aside class="bio-side" id="bioRight" aria-label="生平事迹右侧摘要"></aside>
         </div>
-        <div class="person-name">
-          <h2>彭聃龄</h2>
-          <div class="years">1935—2026</div>
-        </div>
-        <p class="epitaph">先生风范长存，学脉泽被后学。<br />谨以鲜花、烛光与文字寄托哀思。</p>
-      </div>
-
-      <div class="bio-panel">
-        <div class="section-kicker">生平事迹</div>
-        <h2 class="bio-title" id="bioTitle">学术与教育人生</h2>
-        <p class="bio-text" id="bioText"></p>
         <div class="bio-dots" id="bioDots" aria-label="生平事迹轮播指示器"></div>
       </div>
     </section>
 
-    <section class="quote-section" aria-label="先生遗风与经典语录">
-      <div class="quote-card">
-        <div class="quote-title-row">
-          <div class="quote-title-left">
-            <span class="quote-icon">📖</span>
-            <h2>先生遗风 · 经典语录</h2>
-          </div>
+    <div class="setup-warning" id="setupWarning">
+      当前 Supabase 表结构可能尚未完成。若留言、附件或回复无法保存，请先运行新版 memorial_comments 数据表与 Storage 权限 SQL。
+    </div>
+
+    <section class="section-block" aria-label="追忆影像视频播放模块">
+      <div class="section-header">
+        <h2>追忆影像</h2>
+        <p>追忆影像将自动播放。您也可以通过视频控制条暂停、继续播放或调整声音。</p>
+      </div>
+      <div class="memory-video-wrap">
+        <div class="memory-video-frame">
+          <video
+            id="memoryVideo"
+            class="memory-video"
+            src="./assets/追忆影像.mp4"
+            poster="./assets/2.jpg"
+            preload="metadata"
+            autoplay
+            muted
+            playsinline
+            controls>
+            您的浏览器不支持视频播放，请下载或更换浏览器查看。
+          </video>
         </div>
-
-        <div class="quote-list">
-          <div class="quote-item">
-            <div class="quote-mark">“</div>
-            <div>
-              <p class="quote-text">科学研究是一项崇高的事业，需要耐得住寂寞，经得起时间的检验。</p>
-              <p class="quote-source">——《普通心理学》序言</p>
-            </div>
-          </div>
-
-          <div class="quote-item">
-            <div class="quote-mark">“</div>
-            <div>
-              <p class="quote-text">心理学是最贴近人心的科学，它让我们更懂得彼此，也更懂得自己。</p>
-              <p class="quote-source">—— 科普文章寄语</p>
-            </div>
-          </div>
-
-          <div class="quote-item">
-            <div class="quote-mark">“</div>
-            <div>
-              <p class="quote-text">教育的本质不是灌输，而是点燃心灵的火焰。</p>
-              <p class="quote-source">—— 教学心得</p>
-            </div>
-          </div>
-
-          <div class="quote-item">
-            <div class="quote-mark">“</div>
-            <div>
-              <p class="quote-text">认知是一把钥匙，打开了理解人类心智的大门。</p>
-              <p class="quote-source">—— 学术讲座</p>
-            </div>
-          </div>
-
-          <div class="quote-item">
-            <div class="quote-mark">“</div>
-            <div>
-              <p class="quote-text">一个优秀的学者，首先应该是一个诚实的人。</p>
-              <p class="quote-source">—— 对学生寄语</p>
-            </div>
-          </div>
+        <div class="video-meta-row">
+          <span>提示：为保证自动播放，视频初始为静音；如需声音，可在控制条中开启。</span>
+          <button class="mini-btn" id="videoReplayBtn" type="button">重播影像</button>
         </div>
       </div>
     </section>
 
-    <main class="main-area">
-      <section class="panel" aria-label="互动功能区">
-        <div class="panel-header">
-          <h3>敬献心意</h3>
-          <p>请先填写姓名，再送花、点烛、留言或上传缅怀图片。所有记录会保存到后端数据库，并实时展示。</p>
+    <main class="comments-layout" aria-label="互动评论区">
+      <section class="section-block" aria-label="留言输入区">
+        <div class="section-header">
+          <h3>发表缅怀留言</h3>
+          <p>可提交文字、Emoji、图片与 PDF/Word 文档。未发送的文字内容会自动暂存，刷新后可继续编辑。</p>
         </div>
         <div class="form-body">
           <div class="form-row">
-            <label for="visitorName">您的姓名</label>
-            <input id="visitorName" type="text" maxlength="30" placeholder="请输入姓名" autocomplete="name" />
+            <label for="visitorName">您的姓名 <span aria-hidden="true">*</span></label>
+            <input id="visitorName" type="text" placeholder="请填写姓名" autocomplete="name" />
           </div>
 
-          <div class="quick-actions">
-            <button class="action-btn" id="flowerBtn" type="button">🌼 送鲜花</button>
-            <button class="action-btn" id="candleBtn" type="button">🕯️ 点蜡烛</button>
+          <div class="form-row relation-row" id="relationRow">
+            <label for="visitorRelation">您与先生的关系 <span aria-hidden="true">*</span></label>
+            <select id="visitorRelation">
+              <option value="">请选择与先生的关系</option>
+              <option value="亲属">亲属</option>
+              <option value="朋友">朋友</option>
+              <option value="同辈">同辈</option>
+              <option value="同事">同事</option>
+              <option value="师生">师生</option>
+              <option value="其他">其他</option>
+            </select>
           </div>
 
           <div class="form-row">
-            <label for="messageText">缅怀留言</label>
-            <textarea id="messageText" maxlength="1000" placeholder="写下您对彭老师的思念、感谢或祝福……"></textarea>
-            <button class="submit-btn" id="messageBtn" type="button">提交留言</button>
-          </div>
-
-          <div class="form-row">
-            <label>上传缅怀图片</label>
-            <div class="file-line">
-              <label class="file-label" for="imageInput">选择图片</label>
-              <input id="imageInput" type="file" accept="image/jpeg,image/png,image/webp,image/gif" />
-              <div class="file-name" id="fileName">支持 jpg、png、webp、gif；单张不超过 5MB。</div>
-              <button class="submit-btn" id="imageBtn" type="button">上传图片</button>
+            <div class="reply-target" id="replyTarget">
+              <span id="replyText"></span>
+              <button class="mini-btn ghost-btn" id="cancelReplyBtn" type="button">取消回复</button>
             </div>
+            <label for="messageText">缅怀正文 <span aria-hidden="true">*</span></label>
+            <textarea id="messageText" placeholder="写下您对彭老师的思念、感谢、追忆或祝福……"></textarea>
           </div>
+
+          <div class="form-row">
+            <label>上传附件</label>
+            <div class="upload-grid">
+              <label class="file-label" for="imageInput">选择图片</label>
+              <label class="file-label" for="docInput">选择文档</label>
+            </div>
+            <input id="imageInput" type="file" multiple accept="image/jpeg,image/png,image/webp,image/gif" />
+            <input id="docInput" type="file" multiple accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,.pdf,.doc,.docx" />
+            <div class="file-info" id="fileInfo">图片最多 1000 张，文档最多 1000 份；单个文件和总大小均不超过 300MB。</div>
+          </div>
+
+          <button class="submit-btn" id="submitCommentBtn" type="button">提交留言</button>
         </div>
       </section>
 
-      <section class="panel messages-panel" aria-label="留言展示区">
-        <div class="panel-header">
-          <div class="panel-title-row">
+      <section class="section-block messages-panel" aria-label="留言展示区">
+        <div class="section-header">
+          <div class="section-title-row">
             <h3>亲友缅怀留言</h3>
             <span class="record-count" id="recordCount">共 0 条</span>
           </div>
-          <p>最新记录显示在顶部。送花、点烛、文字留言与图片留言都会在这里展示。</p>
+          <p>最新评论显示在最前面。每页展示 10 条主留言，回复会跟随原留言展示。</p>
+          <div class="admin-bar" aria-label="管理员操作区">
+            <button class="mini-btn ghost-btn" id="adminToggleBtn" type="button">管理员模式</button>
+            <span class="admin-state" id="adminState">管理员可删除不适宜展示的留言</span>
+          </div>
         </div>
         <div class="messages-list" id="messagesList">
-          <div class="empty-state">正在加载缅怀记录……</div>
+          <div class="empty-state">正在加载缅怀留言……</div>
         </div>
+        <div class="pagination" id="pagination"></div>
       </section>
     </main>
 
     <footer class="footer">
       彭聃龄先生千古<br />
-      愿烛光与鲜花，长伴先生温厚风范。<br />
+      愿星光般的追忆，长伴先生温厚风范。<br />
       彭聃龄先生线上缅怀室 · 永远的怀念
     </footer>
+  </div>
+
+  <div class="preview-modal" id="previewModal" role="dialog" aria-modal="true" aria-label="附件预览">
+    <div class="preview-card">
+      <div class="preview-head">
+        <div class="preview-title" id="previewTitle">附件预览</div>
+        <div class="preview-actions">
+          <a class="mini-btn" id="previewDownload" href="#" target="_blank" rel="noopener">下载</a>
+          <button class="mini-btn ghost-btn" id="previewClose" type="button">关闭</button>
+        </div>
+      </div>
+      <div class="preview-body" id="previewBody"></div>
+    </div>
   </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -1437,34 +1402,29 @@
   <script>
     const SUPABASE_URL = 'https://rkxvccduocsowfbccrmg.supabase.co';
     const SUPABASE_PUBLIC_KEY = 'sb_publishable_opaW2fRlrRVMnzEPZNRiUg_uqPX08sI';
-    const STORAGE_BUCKET = 'memorial-images';
 
-    const lifeSlides = [
-      {
-        title: '一生从教，矢志学科建设',
-        text: '彭聃龄先生1935年出生于湖南长沙，1958年毕业于北京师范大学教育系学校教育专业，同年留校任教。从教六十余载，先生潜心育人、笃志治学，将毕生心血奉献给中国心理学事业。'
-      },
-      {
-        title: '开拓认知心理学、心理语言学与认知神经科学',
-        text: '先生是我国认知心理学、心理语言学和认知神经科学的重要先驱与奠基人之一，率先推动具有中国特色的汉语认知及其神经机制研究，积极促进心理学与脑科学、语言学、教育学等领域的交叉融合。'
-      },
-      {
-        title: '推动脑与认知科学研究平台建设',
-        text: '20世纪90年代末，先生全力投入认知神经科学研究，推动北京师范大学脑与认知科学研究平台建设，组织开展汉语认知的脑成像研究，为我国认知神经科学、脑与学习研究及儿童脑智发展研究奠定重要基础。'
-      },
-      {
-        title: '立德树人，桃李芬芳',
-        text: '先生始终把立德树人、培养学生置于学术生涯的重要位置，荣获全国优秀教师称号。主编的《普通心理学》影响广泛，荣获教育部第二届全国教材建设奖高等教育类一等奖。'
-      },
-      {
-        title: '学术贡献深远，成果泽被后学',
-        text: '先生曾任北京师范大学原心理系主任、“脑与认知科学”研究中心主任，并曾担任教育部高校心理学教学指导委员会副主任、中国心理学会常务理事等职。其学术贡献深刻影响我国心理学和脑科学的发展进程。'
-      },
-      {
-        title: '晚年笔耕不辍，推动心理学科普',
-        text: '退休后，先生仍心系心理学事业发展与科学普及，撰写科普文章200余篇，出版《心理学纵横谈》《向心理学家提问》等科普著作，以通俗文字推动心理学走近社会、服务大众。'
-      }
+    // 为了少改你现有后台，继续使用已建的 memorial-images bucket 保存图片和文档。
+    // 若想更规范，也可以在 Supabase 新建 memorial-files bucket，并把这里改成 memorial-files。
+    const STORAGE_BUCKET = 'memorial-images';
+    const COMMENTS_TABLE = 'memorial_comments';
+
+    const DEFAULT_PORTRAIT = './assets/2.jpg';
+    const MEMORY_VIDEO = './assets/追忆影像.mp4';
+
+    // 前端基础风控：用于给访客即时提示。正式上线建议再接入 Supabase Edge Function 或第三方内容安全接口做后端复检。
+    const SENSITIVE_PATTERNS = [
+      /色情|淫秽|黄色内容|裸聊|援交|嫖娼|约炮|成人服务/i,
+      /血腥|暴力威胁|恐怖袭击|爆炸物|杀人|砍人|纵火|自制武器/i,
+      /反动|煽动颠覆|分裂国家|极端组织|政治敏感|非法集会/i,
+      /辱骂|人身攻击|恶意诽谤/i
     ];
+
+    const MAX_IMAGE_COUNT = 1000;
+    const MAX_DOC_COUNT = 1000;
+    const MAX_FILE_BYTES = 300 * 1024 * 1024;
+    const MAX_TOTAL_BYTES = 300 * 1024 * 1024;
+    const PAGE_SIZE = 10;
+    const FOLD_LIMIT = 200;
 
     const isConfigured = !SUPABASE_URL.includes('YOUR_SUPABASE_URL') && !SUPABASE_PUBLIC_KEY.includes('YOUR_SUPABASE_PUBLISHABLE_KEY');
     const client = isConfigured ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLIC_KEY, {
@@ -1473,50 +1433,77 @@
 
     const els = {
       setupWarning: document.getElementById('setupWarning'),
-      flowerCount: document.getElementById('flowerCount'),
-      candleCount: document.getElementById('candleCount'),
-      todayVisitors: document.getElementById('todayVisitors'),
-      totalVisitors: document.getElementById('totalVisitors'),
-      bioTitle: document.getElementById('bioTitle'),
-      bioText: document.getElementById('bioText'),
+      portraitImage: document.getElementById('portraitImage'),
+      bioLeft: document.getElementById('bioLeft'),
+      bioRight: document.getElementById('bioRight'),
       bioDots: document.getElementById('bioDots'),
+      memoryVideo: document.getElementById('memoryVideo'),
+      videoReplayBtn: document.getElementById('videoReplayBtn'),
       visitorName: document.getElementById('visitorName'),
-      flowerBtn: document.getElementById('flowerBtn'),
-      candleBtn: document.getElementById('candleBtn'),
+      relationRow: document.getElementById('relationRow'),
+      visitorRelation: document.getElementById('visitorRelation'),
       messageText: document.getElementById('messageText'),
-      messageBtn: document.getElementById('messageBtn'),
       imageInput: document.getElementById('imageInput'),
-      imageBtn: document.getElementById('imageBtn'),
-      fileName: document.getElementById('fileName'),
+      docInput: document.getElementById('docInput'),
+      fileInfo: document.getElementById('fileInfo'),
+      submitCommentBtn: document.getElementById('submitCommentBtn'),
       messagesList: document.getElementById('messagesList'),
+      pagination: document.getElementById('pagination'),
       recordCount: document.getElementById('recordCount'),
+      replyTarget: document.getElementById('replyTarget'),
+      replyText: document.getElementById('replyText'),
+      cancelReplyBtn: document.getElementById('cancelReplyBtn'),
       toast: document.getElementById('toast'),
+      previewModal: document.getElementById('previewModal'),
+      previewTitle: document.getElementById('previewTitle'),
+      previewBody: document.getElementById('previewBody'),
+      previewDownload: document.getElementById('previewDownload'),
+      previewClose: document.getElementById('previewClose'),
+      adminToggleBtn: document.getElementById('adminToggleBtn'),
+      adminState: document.getElementById('adminState'),
       bgm: document.getElementById('bgm'),
       musicToggle: document.getElementById('musicToggle'),
       musicIcon: document.getElementById('musicIcon'),
       musicText: document.getElementById('musicText')
     };
 
-    let currentSlide = 0;
-    let records = [];
+    const lifePairs = [
+      {
+        leftTitle: '一生从教，矢志学科建设',
+        leftText: '先生1958年毕业于北京师范大学教育系学校教育专业，同年留校任教。从教六十余载，潜心育人、笃志治学，将毕生心血奉献给中国心理学事业。',
+        rightTitle: '立德树人，桃李芬芳',
+        rightText: '先生始终把立德树人、培养学生置于学术生涯的重要位置。其严谨学风、温厚人格与教育情怀，深深影响了一代又一代后学。'
+      },
+      {
+        leftTitle: '开拓认知心理学与心理语言学',
+        leftText: '先生是我国认知心理学、心理语言学和认知神经科学的重要先驱之一，长期推动具有中国特色的汉语认知及其神经机制研究。',
+        rightTitle: '推动交叉融合与平台建设',
+        rightText: '先生积极促进心理学与脑科学、语言学、教育学等领域的交叉融合，推动脑与认知科学研究平台建设，为后续研究奠定重要基础。'
+      },
+      {
+        leftTitle: '教材建设，影响深远',
+        leftText: '先生主编的《普通心理学》影响广泛，成为心理学教学的重要教材，也见证了先生对基础教学和学科传承的长期投入。',
+        rightTitle: '晚年笔耕不辍，心系科普',
+        rightText: '退休后，先生仍心系心理学事业发展与科学普及，以通俗文字推动心理学走近社会、服务大众。'
+      }
+    ];
+
+    let currentBio = 0;
+    let allComments = [];
+    let currentPage = 1;
+    let replyParentId = null;
+    let replyParentName = '';
     let toastTimer = null;
     let musicEnabled = localStorage.getItem('memorial_music_enabled') !== 'false';
-
-    function getVisitorKey() {
-      let key = localStorage.getItem('memorial_visitor_key');
-      if (!key) {
-        key = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
-        localStorage.setItem('memorial_visitor_key', key);
-      }
-      return key;
-    }
+    let adminToken = sessionStorage.getItem('memorial_admin_token') || '';
+    let adminMode = Boolean(adminToken);
 
     function showToast(message, type = 'normal') {
       clearTimeout(toastTimer);
       els.toast.textContent = message;
-      els.toast.style.borderColor = type === 'error' ? 'rgba(241,183,173,.55)' : 'rgba(255,255,255,.14)';
+      els.toast.style.borderColor = type === 'error' ? 'rgba(241,183,173,.58)' : 'rgba(255,255,255,.14)';
       els.toast.classList.add('show');
-      toastTimer = setTimeout(() => els.toast.classList.remove('show'), 2600);
+      toastTimer = setTimeout(() => els.toast.classList.remove('show'), 2800);
     }
 
     function requireBackend() {
@@ -1525,15 +1512,13 @@
       return false;
     }
 
-    function getName() {
-      const name = els.visitorName.value.trim();
-      if (!name) {
-        showToast('请先输入姓名。', 'error');
-        els.visitorName.focus();
-        return null;
+    function getVisitorKey() {
+      let key = localStorage.getItem('memorial_visitor_key');
+      if (!key) {
+        key = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+        localStorage.setItem('memorial_visitor_key', key);
       }
-      localStorage.setItem('memorial_visitor_name', name);
-      return name;
+      return key;
     }
 
     function setLoading(button, loadingText) {
@@ -1546,58 +1531,6 @@
         button.disabled = false;
         button.textContent = oldText;
       };
-    }
-
-    function createRipple(event) {
-      const button = event.currentTarget;
-      const rect = button.getBoundingClientRect();
-      const size = Math.max(rect.width, rect.height);
-      const ripple = document.createElement('span');
-      ripple.className = 'ripple';
-      ripple.style.width = ripple.style.height = `${size}px`;
-      ripple.style.left = `${event.clientX - rect.left - size / 2}px`;
-      ripple.style.top = `${event.clientY - rect.top - size / 2}px`;
-      button.appendChild(ripple);
-      button.classList.add('glow');
-      setTimeout(() => ripple.remove(), 760);
-      setTimeout(() => button.classList.remove('glow'), 850);
-    }
-
-    function floatEmoji(emoji, event) {
-      const item = document.createElement('div');
-      item.className = 'float-emoji';
-      item.textContent = emoji;
-      item.style.left = `${event.clientX}px`;
-      item.style.top = `${event.clientY - 8}px`;
-      document.body.appendChild(item);
-      setTimeout(() => item.remove(), 1400);
-    }
-
-    function renderBio() {
-      const slide = lifeSlides[currentSlide];
-      els.bioTitle.textContent = slide.title;
-      els.bioText.textContent = slide.text;
-      els.bioDots.innerHTML = '';
-
-      lifeSlides.forEach((_, index) => {
-        const dot = document.createElement('button');
-        dot.className = `dot${index === currentSlide ? ' active' : ''}`;
-        dot.type = 'button';
-        dot.setAttribute('aria-label', `查看第${index + 1}条生平事迹`);
-        dot.addEventListener('click', () => {
-          currentSlide = index;
-          renderBio();
-        });
-        els.bioDots.appendChild(dot);
-      });
-    }
-
-    function startBioCarousel() {
-      renderBio();
-      setInterval(() => {
-        currentSlide = (currentSlide + 1) % lifeSlides.length;
-        renderBio();
-      }, 5600);
     }
 
     function formatTime(value) {
@@ -1615,222 +1548,28 @@
       }
     }
 
-    function getRecordIcon(type) {
-      if (type === 'flower') return '🌼';
-      if (type === 'candle') return '🕯️';
-      if (type === 'image') return '🖼️';
-      return '📝';
-    }
-
-    function getRecordText(record) {
-      if (record.action_type === 'flower') return '为彭老师送出了鲜花';
-      if (record.action_type === 'candle') return '为彭老师点上了蜡烛';
-      if (record.action_type === 'image') return record.content ? `上传了一张缅怀图片：${record.content}` : '上传了一张缅怀图片';
-      return record.content || '';
-    }
-
-    function renderRecords() {
-      els.messagesList.innerHTML = '';
-      if (els.recordCount) {
-        els.recordCount.textContent = `共 ${records.length} 条`;
+    function formatBytes(bytes) {
+      if (!Number.isFinite(bytes)) return '';
+      const units = ['B', 'KB', 'MB', 'GB'];
+      let value = bytes;
+      let unit = 0;
+      while (value >= 1024 && unit < units.length - 1) {
+        value /= 1024;
+        unit++;
       }
-
-      if (!records.length) {
-        const empty = document.createElement('div');
-        empty.className = 'empty-state';
-        empty.textContent = isConfigured ? '还没有缅怀记录。您可以成为第一位留言的人。' : '请先完成 Supabase 配置，页面会在这里显示所有缅怀记录。';
-        els.messagesList.appendChild(empty);
-        return;
-      }
-
-      const frag = document.createDocumentFragment();
-      records.forEach(record => {
-        const item = document.createElement('article');
-        item.className = 'record';
-
-        const icon = document.createElement('div');
-        icon.className = 'record-icon';
-        icon.textContent = getRecordIcon(record.action_type);
-
-        const body = document.createElement('div');
-
-        const meta = document.createElement('div');
-        meta.className = 'record-meta';
-
-        const visitor = document.createElement('div');
-        visitor.className = 'visitor';
-        visitor.textContent = record.visitor_name;
-
-        const time = document.createElement('time');
-        time.className = 'time';
-        time.textContent = formatTime(record.created_at);
-
-        meta.appendChild(visitor);
-        meta.appendChild(time);
-
-        const text = document.createElement('div');
-        text.className = 'record-text';
-        if (record.action_type === 'message') {
-          text.textContent = getRecordText(record);
-        } else {
-          text.textContent = `${record.visitor_name}${getRecordText(record)}`;
-        }
-
-        body.appendChild(meta);
-        body.appendChild(text);
-
-        if (record.action_type === 'image' && record.image_url) {
-          const img = document.createElement('img');
-          img.className = 'record-img';
-          img.src = record.image_url;
-          img.alt = `${record.visitor_name}上传的缅怀图片`;
-          img.loading = 'lazy';
-          body.appendChild(img);
-        }
-
-        item.appendChild(icon);
-        item.appendChild(body);
-        frag.appendChild(item);
-      });
-
-      els.messagesList.appendChild(frag);
+      return `${value.toFixed(value >= 10 || unit === 0 ? 0 : 1)} ${units[unit]}`;
     }
 
-    async function loadStats() {
-      if (!isConfigured) return;
-      const { data, error } = await client.rpc('get_memorial_stats');
-      if (error) {
-        console.error(error);
-        showToast('统计数据加载失败，请检查 Supabase SQL 是否已运行。', 'error');
-        return;
-      }
-      const stats = Array.isArray(data) ? data[0] : data;
-      els.flowerCount.textContent = stats?.flower_count ?? 0;
-      els.candleCount.textContent = stats?.candle_count ?? 0;
-      els.todayVisitors.textContent = stats?.today_visitors ?? 0;
-      els.totalVisitors.textContent = stats?.total_visitors ?? 0;
+    function escapeHtml(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
     }
 
-    async function loadRecords() {
-      if (!isConfigured) {
-        renderRecords();
-        return;
-      }
-
-      const { data, error } = await client
-        .from('memorial_actions')
-        .select('id, created_at, visitor_name, visitor_key, action_type, content, image_url, image_path')
-        .order('created_at', { ascending: false })
-        .limit(300);
-
-      if (error) {
-        console.error(error);
-        showToast('缅怀记录加载失败，请检查 Supabase 权限设置。', 'error');
-        renderRecords();
-        return;
-      }
-
-      records = data || [];
-      renderRecords();
-    }
-
-    async function insertAction(action) {
-      if (!requireBackend()) return false;
-      const visitorName = getName();
-      if (!visitorName) return false;
-
-      const payload = {
-        visitor_name: visitorName,
-        visitor_key: getVisitorKey(),
-        action_type: action.type,
-        content: action.content || null,
-        image_url: action.imageUrl || null,
-        image_path: action.imagePath || null
-      };
-
-      const { error } = await client.from('memorial_actions').insert(payload);
-      if (error) {
-        console.error(error);
-        showToast('保存失败，请稍后再试或检查数据库权限。', 'error');
-        return false;
-      }
-
-      await loadStats();
-      return true;
-    }
-
-    async function handleFlower(event) {
-      createRipple(event);
-      floatEmoji('🌼', event);
-      const reset = setLoading(els.flowerBtn, '正在送花…');
-      const ok = await insertAction({ type: 'flower' });
-      reset();
-      if (ok) showToast('已为彭老师送出鲜花。');
-    }
-
-    async function handleCandle(event) {
-      createRipple(event);
-      floatEmoji('🕯️', event);
-      const reset = setLoading(els.candleBtn, '正在点烛…');
-      const ok = await insertAction({ type: 'candle' });
-      reset();
-      if (ok) showToast('已为彭老师点上蜡烛。');
-    }
-
-    async function handleMessage() {
-      const content = els.messageText.value.trim();
-      if (!content) {
-        showToast('请输入留言内容。', 'error');
-        els.messageText.focus();
-        return;
-      }
-
-      const reset = setLoading(els.messageBtn, '正在提交…');
-      const ok = await insertAction({ type: 'message', content });
-      reset();
-
-      if (ok) {
-        els.messageText.value = '';
-        showToast('留言已提交。');
-      }
-    }
-
-    function validateImage(file) {
-      const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-
-      if (!file) {
-        showToast('请先选择一张图片。', 'error');
-        return false;
-      }
-
-      if (!allowed.includes(file.type)) {
-        showToast('图片格式不支持。仅支持 jpg、png、webp、gif。', 'error');
-        return false;
-      }
-
-      if (file.size > 5 * 1024 * 1024) {
-        showToast('图片大小超出限制。单张图片不能超过 5MB。', 'error');
-        return false;
-      }
-
-      return true;
-    }
-
-    function getFileExt(file) {
-      const map = {
-        'image/jpeg': 'jpg',
-        'image/png': 'png',
-        'image/webp': 'webp',
-        'image/gif': 'gif'
-      };
-      return map[file.type] || 'jpg';
-    }
-
-    function pad2(value) {
-      return String(value).padStart(2, '0');
-    }
-
-    function safeAsciiName(value, fallback = 'memorial-image') {
+    function safeAsciiName(value, fallback = 'file') {
       const cleaned = String(value || '')
         .normalize('NFKD')
         .replace(/[\u0300-\u036f]/g, '')
@@ -1838,85 +1577,734 @@
         .replace(/[-_.]{2,}/g, '-')
         .replace(/^[-_.]+|[-_.]+$/g, '')
         .toLowerCase();
-
-      return (cleaned || fallback).slice(0, 60);
+      return (cleaned || fallback).slice(0, 80);
     }
 
-    function buildMeaningfulImagePath(file, visitorKey, ext) {
+    function pad2(value) {
+      return String(value).padStart(2, '0');
+    }
+
+    function getExt(file) {
+      const fromName = file.name.includes('.') ? file.name.split('.').pop().toLowerCase() : '';
+      const mimeMap = {
+        'image/jpeg': 'jpg',
+        'image/png': 'png',
+        'image/webp': 'webp',
+        'image/gif': 'gif',
+        'application/pdf': 'pdf',
+        'application/msword': 'doc',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx'
+      };
+      return mimeMap[file.type] || fromName || 'file';
+    }
+
+    function buildFilePath(file, kind, commentId) {
       const now = new Date();
       const dateFolder = `${now.getFullYear()}-${pad2(now.getMonth() + 1)}-${pad2(now.getDate())}`;
-      const timePart = `${pad2(now.getHours())}${pad2(now.getMinutes())}${pad2(now.getSeconds())}`;
-      const shortVisitor = safeAsciiName(String(visitorKey).slice(0, 12), 'visitor');
-      const originalBase = file.name.replace(/\.[^.]+$/, '');
-      const safeOriginalBase = safeAsciiName(originalBase, 'memorial-image');
-      const randomShort = (window.crypto && crypto.randomUUID)
-        ? crypto.randomUUID().replace(/-/g, '').slice(0, 8)
-        : Math.random().toString(36).slice(2, 10);
-
-      return `uploads/${dateFolder}/visitor-${shortVisitor}/${timePart}-${safeOriginalBase}-${randomShort}.${ext}`;
+      const visitor = safeAsciiName(getVisitorKey().slice(0, 12), 'visitor');
+      const base = safeAsciiName(file.name.replace(/\.[^.]+$/, ''), kind);
+      const random = crypto.randomUUID ? crypto.randomUUID().replace(/-/g, '').slice(0, 10) : Math.random().toString(36).slice(2, 12);
+      const ext = getExt(file);
+      return `comments/${dateFolder}/${visitor}/${commentId}/${kind}-${base}-${random}.${ext}`;
     }
 
-    async function handleImageUpload() {
-      if (!requireBackend()) return;
-      const visitorName = getName();
-      if (!visitorName) return;
-
-      const file = els.imageInput.files[0];
-      if (!validateImage(file)) return;
-
-      const reset = setLoading(els.imageBtn, '正在上传…');
-      const ext = getFileExt(file);
-      const visitorKey = String(getVisitorKey()).replace(/[^a-zA-Z0-9_-]/g, '') || 'visitor';
-      const path = buildMeaningfulImagePath(file, visitorKey, ext);
-
-      const { error: uploadError } = await client.storage
-        .from(STORAGE_BUCKET)
-        .upload(path, file, {
-          cacheControl: '3600',
-          upsert: false,
-          contentType: file.type
+    function renderBio() {
+      const item = lifePairs[currentBio];
+      els.bioLeft.innerHTML = `
+        <div class="bio-kicker">生平事迹</div>
+        <h2>${escapeHtml(item.leftTitle)}</h2>
+        <p>${escapeHtml(item.leftText)}</p>
+      `;
+      els.bioRight.innerHTML = `
+        <div class="bio-kicker">先生遗风</div>
+        <h2>${escapeHtml(item.rightTitle)}</h2>
+        <p>${escapeHtml(item.rightText)}</p>
+      `;
+      els.bioDots.innerHTML = '';
+      lifePairs.forEach((_, index) => {
+        const dot = document.createElement('button');
+        dot.type = 'button';
+        dot.className = `dot${index === currentBio ? ' active' : ''}`;
+        dot.setAttribute('aria-label', `查看第${index + 1}组生平事迹`);
+        dot.addEventListener('click', () => {
+          currentBio = index;
+          renderBio();
         });
+        els.bioDots.appendChild(dot);
+      });
+    }
 
-      if (uploadError) {
-        console.error(uploadError);
+    function startBioCarousel() {
+      renderBio();
+      setInterval(() => {
+        currentBio = (currentBio + 1) % lifePairs.length;
+        renderBio();
+      }, 6200);
+    }
+
+    function initVideo() {
+      if (!els.memoryVideo) return;
+      els.memoryVideo.src = MEMORY_VIDEO;
+      els.memoryVideo.addEventListener('error', () => {
+        showToast('视频加载失败，请刷新页面重试', 'error');
+      });
+
+      async function tryPlayVideo(showTip = false) {
+        try {
+          await els.memoryVideo.play();
+          return true;
+        } catch (error) {
+          console.warn('Video autoplay blocked or failed:', error);
+          if (showTip) showToast('浏览器可能阻止了视频自动播放，请点击视频播放按钮。');
+          return false;
+        }
+      }
+
+      els.videoReplayBtn.addEventListener('click', async () => {
+        els.memoryVideo.currentTime = 0;
+        const ok = await tryPlayVideo(false);
+        showToast(ok ? '追忆影像已从头播放。' : '请点击视频控制条播放。', ok ? 'normal' : 'error');
+      });
+
+      tryPlayVideo(false);
+      document.addEventListener('click', () => {
+        if (els.memoryVideo.paused) tryPlayVideo(false);
+      }, { once: true });
+    }
+
+    function selectedFiles() {
+      return {
+        images: [...els.imageInput.files],
+        docs: [...els.docInput.files]
+      };
+    }
+
+    function updateFileInfo() {
+      const { images, docs } = selectedFiles();
+      const imageText = images.length ? `已选图片 ${images.length} 张` : '未选择图片';
+      const docText = docs.length ? `已选文档 ${docs.length} 份` : '未选择文档';
+      const total = [...images, ...docs].reduce((sum, file) => sum + file.size, 0);
+      els.fileInfo.textContent = `${imageText}；${docText}；合计 ${formatBytes(total)}。图片最多 1000 张，文档最多 1000 份；单个文件和总大小均不超过 300MB。`;
+    }
+
+    function validateIdentityAndContent() {
+      const visitorName = els.visitorName.value.trim();
+      const visitorRelation = els.visitorRelation.value.trim();
+      const content = els.messageText.value.trim();
+
+      if (!visitorName) {
+        showToast('请填写姓名', 'error');
+        els.visitorName.focus();
+        return null;
+      }
+
+      if (!visitorRelation) {
+        els.relationRow.classList.add('show');
+        showToast('请选择与先生的关系', 'error');
+        els.visitorRelation.focus();
+        return null;
+      }
+
+      if (!content) {
+        showToast('请输入留言内容', 'error');
+        els.messageText.focus();
+        return null;
+      }
+
+      return { visitorName, visitorRelation, content };
+    }
+
+    function normalizeForRiskCheck(value) {
+      return String(value || '')
+        .normalize('NFKC')
+        .replace(/\s+/g, '')
+        .toLowerCase();
+    }
+
+    function passRiskCheck(checked) {
+      const { images, docs } = selectedFiles();
+      const fileNames = [...images, ...docs].map(file => file.name).join(' ');
+      const combined = normalizeForRiskCheck(`${checked.visitorName} ${checked.visitorRelation} ${checked.content} ${fileNames}`);
+      const blocked = SENSITIVE_PATTERNS.some(pattern => pattern.test(combined));
+      if (blocked) {
+        showToast('评论内容包含敏感信息，无法发送', 'error');
+        return false;
+      }
+      return true;
+    }
+
+    function validateFiles() {
+      const { images, docs } = selectedFiles();
+      const all = [...images, ...docs];
+      const imageTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+      const docTypes = [
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+      ];
+
+      if (images.length > MAX_IMAGE_COUNT) {
+        showToast('图片数量超过限制，每条留言最多上传1000张图片', 'error');
+        return false;
+      }
+
+      if (docs.length > MAX_DOC_COUNT) {
+        showToast('文档数量超过限制，每条留言最多上传1000份文档', 'error');
+        return false;
+      }
+
+      for (const file of images) {
+        if (!imageTypes.includes(file.type)) {
+          showToast('图片格式不支持。仅支持 jpg、png、webp、gif。', 'error');
+          return false;
+        }
+      }
+
+      for (const file of docs) {
+        const lower = file.name.toLowerCase();
+        const extOk = lower.endsWith('.pdf') || lower.endsWith('.doc') || lower.endsWith('.docx');
+        if (!docTypes.includes(file.type) && !extOk) {
+          showToast('文档格式不支持。仅支持 PDF、Word 文档。', 'error');
+          return false;
+        }
+      }
+
+      if (all.some(file => file.size > MAX_FILE_BYTES)) {
+        showToast('文件大小超过限制，请上传小于300M的文件', 'error');
+        return false;
+      }
+
+      const total = all.reduce((sum, file) => sum + file.size, 0);
+      if (total > MAX_TOTAL_BYTES) {
+        showToast('文件大小超过限制，请上传小于300M的文件', 'error');
+        return false;
+      }
+
+      return true;
+    }
+
+    async function uploadAttachments(commentId) {
+      const { images, docs } = selectedFiles();
+      const queue = [
+        ...images.map(file => ({ file, kind: 'image' })),
+        ...docs.map(file => ({ file, kind: 'document' }))
+      ];
+
+      const attachments = [];
+      for (const item of queue) {
+        const path = buildFilePath(item.file, item.kind, commentId);
+        const { error: uploadError } = await client.storage
+          .from(STORAGE_BUCKET)
+          .upload(path, item.file, {
+            cacheControl: '3600',
+            upsert: false,
+            contentType: item.file.type || undefined
+          });
+
+        if (uploadError) {
+          console.error(uploadError);
+          throw new Error(uploadError.message || '附件上传失败');
+        }
+
+        const { data } = client.storage.from(STORAGE_BUCKET).getPublicUrl(path);
+        attachments.push({
+          kind: item.kind,
+          name: item.file.name,
+          mime: item.file.type || '',
+          size: item.file.size,
+          path,
+          url: data.publicUrl
+        });
+      }
+
+      return attachments;
+    }
+
+    async function submitComment() {
+      if (!requireBackend()) return;
+      const checked = validateIdentityAndContent();
+      if (!checked) return;
+      if (!passRiskCheck(checked)) return;
+      if (!validateFiles()) return;
+
+      const reset = setLoading(els.submitCommentBtn, '正在提交…');
+      const commentId = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+
+      try {
+        const attachments = await uploadAttachments(commentId);
+        const payload = {
+          id: commentId,
+          visitor_name: checked.visitorName,
+          visitor_relation: checked.visitorRelation,
+          visitor_key: getVisitorKey(),
+          content: checked.content,
+          parent_id: replyParentId,
+          attachments
+        };
+
+        const { error } = await client.from(COMMENTS_TABLE).insert(payload);
+        if (error) throw error;
+
+        localStorage.removeItem('memorial_draft_content');
+        localStorage.removeItem('memorial_reply_parent_id');
+        localStorage.removeItem('memorial_reply_parent_name');
+        els.messageText.value = '';
+        els.imageInput.value = '';
+        els.docInput.value = '';
+        clearReply();
+        updateFileInfo();
+        showToast('留言已提交。');
+        await loadComments();
+      } catch (error) {
+        console.error(error);
+        showToast(error.message ? `提交失败：${error.message}` : '提交失败，请检查数据库和 Storage 权限。', 'error');
+      } finally {
         reset();
-        const detail = uploadError.message || uploadError.error_description || uploadError.error || '';
-        showToast(detail ? `图片上传失败：${detail}` : '图片上传失败，请检查 Storage bucket 和权限。', 'error');
+      }
+    }
+
+    async function loadComments() {
+      if (!isConfigured) {
+        renderComments();
         return;
       }
 
-      const { data: publicData } = client.storage.from(STORAGE_BUCKET).getPublicUrl(path);
-      const ok = await insertAction({
-        type: 'image',
-        content: file.name,
-        imageUrl: publicData.publicUrl,
-        imagePath: path
-      });
+      const { data, error } = await client
+        .from(COMMENTS_TABLE)
+        .select('id, created_at, visitor_name, visitor_relation, visitor_key, content, parent_id, attachments')
+        .order('created_at', { ascending: false })
+        .limit(1000);
 
-      reset();
-
-      if (ok) {
-        els.imageInput.value = '';
-        els.fileName.textContent = '支持 jpg、png、webp、gif；单张不超过 5MB。';
-        showToast('图片已上传。');
+      if (error) {
+        console.error(error);
+        els.setupWarning.classList.add('show');
+        showToast('留言加载失败，请检查 memorial_comments 表和读取权限。', 'error');
+        allComments = [];
+        renderComments();
+        return;
       }
+
+      allComments = data || [];
+      updateLatestPortrait();
+      renderComments();
+    }
+
+    function updateLatestPortrait() {
+      const latestImage = allComments
+        .flatMap(comment => (comment.attachments || []).map(attachment => ({ attachment, created_at: comment.created_at })))
+        .filter(item => item.attachment.kind === 'image' && item.attachment.url)
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))[0];
+
+      els.portraitImage.src = latestImage ? latestImage.attachment.url : DEFAULT_PORTRAIT;
+    }
+
+    function renderComments() {
+      els.messagesList.innerHTML = '';
+      els.pagination.innerHTML = '';
+      els.recordCount.textContent = `共 ${allComments.length} 条`;
+
+      if (!allComments.length) {
+        const empty = document.createElement('div');
+        empty.className = 'empty-state';
+        empty.textContent = isConfigured ? '还没有缅怀留言。您可以成为第一位留言的人。' : '请先完成 Supabase 配置，页面会在这里显示所有缅怀留言。';
+        els.messagesList.appendChild(empty);
+        return;
+      }
+
+      const topLevel = allComments
+        .filter(comment => !comment.parent_id)
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+      const totalPages = Math.max(1, Math.ceil(topLevel.length / PAGE_SIZE));
+      currentPage = Math.min(Math.max(currentPage, 1), totalPages);
+      const start = (currentPage - 1) * PAGE_SIZE;
+      const pageItems = topLevel.slice(start, start + PAGE_SIZE);
+
+      const replyMap = new Map();
+      allComments
+        .filter(comment => comment.parent_id)
+        .forEach(comment => {
+          if (!replyMap.has(comment.parent_id)) replyMap.set(comment.parent_id, []);
+          replyMap.get(comment.parent_id).push(comment);
+        });
+
+      replyMap.forEach(list => list.sort((a, b) => new Date(a.created_at) - new Date(b.created_at)));
+
+      const frag = document.createDocumentFragment();
+      pageItems.forEach(comment => {
+        frag.appendChild(createCommentElement(comment, false));
+        appendReplies(frag, comment.id, replyMap, 1);
+      });
+      els.messagesList.appendChild(frag);
+      renderPagination(totalPages);
+    }
+
+    function appendReplies(container, parentId, replyMap, depth) {
+      const replies = replyMap.get(parentId) || [];
+      replies.forEach(reply => {
+        container.appendChild(createCommentElement(reply, true, depth));
+        appendReplies(container, reply.id, replyMap, depth + 1);
+      });
+    }
+
+    function updateAdminUI() {
+      if (!els.adminState) return;
+      els.adminToggleBtn.textContent = adminMode ? '退出管理员模式' : '管理员模式';
+      els.adminState.textContent = adminMode ? '管理员模式已开启：可删除不适宜展示的留言' : '管理员可删除不适宜展示的留言';
+    }
+
+    function toggleAdminMode() {
+      if (adminMode) {
+        adminToken = '';
+        adminMode = false;
+        sessionStorage.removeItem('memorial_admin_token');
+        updateAdminUI();
+        renderComments();
+        showToast('已退出管理员模式。');
+        return;
+      }
+
+      const token = window.prompt('请输入管理员删除口令');
+      if (!token) return;
+      adminToken = token.trim();
+      adminMode = Boolean(adminToken);
+      sessionStorage.setItem('memorial_admin_token', adminToken);
+      updateAdminUI();
+      renderComments();
+      showToast('管理员模式已开启。');
+    }
+
+    async function deleteComment(comment) {
+      if (!requireBackend()) return;
+      if (!adminToken) {
+        showToast('请先开启管理员模式。', 'error');
+        return;
+      }
+      const ok = window.confirm('确认删除这条留言及其下方回复吗？此操作不可撤销。');
+      if (!ok) return;
+
+      try {
+        const { error } = await client.rpc('delete_memorial_comment', {
+          target_comment_id: comment.id,
+          admin_token: adminToken
+        });
+        if (error) throw error;
+        showToast('留言已删除。');
+        await loadComments();
+      } catch (error) {
+        console.error(error);
+        const msg = error.message || '';
+        if (msg.includes('invalid admin token') || msg.includes('管理员口令错误')) {
+          showToast('管理员口令错误，无法删除。', 'error');
+        } else if (msg.includes('Could not find the function') || msg.includes('delete_memorial_comment')) {
+          showToast('删除失败：请先在 Supabase 中创建管理员删除函数。', 'error');
+        } else {
+          showToast('删除失败，请检查管理员权限设置。', 'error');
+        }
+      }
+    }
+
+    function createCommentElement(comment, isReply, depth = 0) {
+      const card = document.createElement('article');
+      card.className = `comment-card${isReply ? ' reply-card' : ''}`;
+      card.style.marginLeft = isReply ? `${Math.min(depth * 22, 66)}px` : '';
+
+      const meta = document.createElement('div');
+      meta.className = 'comment-meta';
+
+      const left = document.createElement('div');
+      const name = document.createElement('span');
+      name.className = 'visitor-name';
+      name.textContent = comment.visitor_name || '匿名访客';
+      const relation = document.createElement('span');
+      relation.className = 'relation-badge';
+      relation.textContent = comment.visitor_relation || '未标注';
+      left.appendChild(name);
+      left.appendChild(relation);
+
+      const time = document.createElement('time');
+      time.className = 'time';
+      time.textContent = formatTime(comment.created_at);
+
+      meta.appendChild(left);
+      meta.appendChild(time);
+      card.appendChild(meta);
+
+      const content = document.createElement('div');
+      content.className = 'comment-content';
+      const fullText = comment.content || '';
+      const isLong = fullText.length > FOLD_LIMIT;
+      content.textContent = isLong ? `${fullText.slice(0, FOLD_LIMIT)}……` : fullText;
+      card.appendChild(content);
+
+      if (isLong) {
+        const foldBtn = document.createElement('button');
+        foldBtn.className = 'mini-btn ghost-btn';
+        foldBtn.type = 'button';
+        foldBtn.textContent = '展开';
+        foldBtn.addEventListener('click', () => {
+          const expanded = foldBtn.textContent === '收起';
+          content.textContent = expanded ? `${fullText.slice(0, FOLD_LIMIT)}……` : fullText;
+          foldBtn.textContent = expanded ? '展开' : '收起';
+        });
+        const row = document.createElement('div');
+        row.className = 'comment-actions';
+        row.appendChild(foldBtn);
+        card.appendChild(row);
+      }
+
+      const attachments = Array.isArray(comment.attachments) ? comment.attachments : [];
+      if (attachments.length) {
+        card.appendChild(createAttachmentsElement(attachments));
+      }
+
+      const actions = document.createElement('div');
+      actions.className = 'comment-actions';
+      const replyBtn = document.createElement('button');
+      replyBtn.className = 'mini-btn';
+      replyBtn.type = 'button';
+      replyBtn.textContent = '回复';
+      replyBtn.addEventListener('click', () => setReply(comment));
+      actions.appendChild(replyBtn);
+
+      if (adminMode) {
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'mini-btn danger-btn';
+        deleteBtn.type = 'button';
+        deleteBtn.textContent = '删除';
+        deleteBtn.addEventListener('click', () => deleteComment(comment));
+        actions.appendChild(deleteBtn);
+      }
+
+      card.appendChild(actions);
+
+      return card;
+    }
+
+    function createAttachmentsElement(attachments) {
+      const wrap = document.createElement('div');
+      wrap.className = 'attachments';
+      const images = attachments.filter(item => item.kind === 'image');
+      const docs = attachments.filter(item => item.kind === 'document');
+
+      if (images.length) {
+        const gallery = document.createElement('div');
+        gallery.className = 'image-gallery';
+        images.forEach(item => {
+          const btn = document.createElement('button');
+          btn.className = 'thumb';
+          btn.type = 'button';
+          btn.title = item.name || '图片预览';
+          const img = document.createElement('img');
+          img.src = item.url;
+          img.alt = item.name || '缅怀图片';
+          img.loading = 'lazy';
+          btn.appendChild(img);
+          btn.addEventListener('click', () => openPreview(item));
+          gallery.appendChild(btn);
+        });
+        wrap.appendChild(gallery);
+      }
+
+      if (docs.length) {
+        const list = document.createElement('div');
+        list.className = 'doc-list';
+        docs.forEach(item => {
+          const doc = document.createElement('div');
+          doc.className = 'doc-item';
+          const icon = document.createElement('div');
+          icon.className = 'doc-icon';
+          icon.textContent = getDocIcon(item);
+
+          const info = document.createElement('div');
+          const name = document.createElement('div');
+          name.className = 'doc-name';
+          name.textContent = item.name || '悼念文档';
+          const size = document.createElement('div');
+          size.className = 'doc-size';
+          size.textContent = formatBytes(item.size || 0);
+          info.appendChild(name);
+          info.appendChild(size);
+
+          const actions = document.createElement('div');
+          actions.className = 'doc-actions';
+          const preview = document.createElement('button');
+          preview.className = 'mini-btn';
+          preview.type = 'button';
+          preview.textContent = '在线预览';
+          preview.addEventListener('click', () => openPreview(item));
+          const download = document.createElement('a');
+          download.className = 'mini-btn ghost-btn';
+          download.href = item.url;
+          download.target = '_blank';
+          download.rel = 'noopener';
+          download.download = item.name || '';
+          download.textContent = '下载';
+          actions.appendChild(preview);
+          actions.appendChild(download);
+
+          doc.appendChild(icon);
+          doc.appendChild(info);
+          doc.appendChild(actions);
+          list.appendChild(doc);
+        });
+        wrap.appendChild(list);
+      }
+
+      return wrap;
+    }
+
+    function getDocIcon(item) {
+      const name = (item.name || '').toLowerCase();
+      if (name.endsWith('.pdf') || item.mime === 'application/pdf') return 'PDF';
+      return '文';
+    }
+
+    function getPreviewUrl(item) {
+      const name = (item.name || '').toLowerCase();
+      const isPdf = item.mime === 'application/pdf' || name.endsWith('.pdf');
+      const isWord = name.endsWith('.doc') || name.endsWith('.docx') || item.mime === 'application/msword' || item.mime === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+      if (isPdf) return item.url;
+      if (isWord) return `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(item.url)}`;
+      return '';
+    }
+
+    function openPreview(item) {
+      els.previewTitle.textContent = item.name || '附件预览';
+      els.previewDownload.href = item.url || '#';
+      els.previewDownload.download = item.name || '';
+      els.previewBody.innerHTML = '';
+
+      if (item.kind === 'image') {
+        const img = document.createElement('img');
+        img.src = item.url;
+        img.alt = item.name || '图片预览';
+        els.previewBody.appendChild(img);
+      } else {
+        const url = getPreviewUrl(item);
+        if (!url) {
+          els.previewBody.innerHTML = '<div style="padding:24px;color:#f6f2e8;text-align:center;line-height:1.8;">预览失败，请尝试下载后查看</div>';
+          showToast('预览失败，请尝试下载后查看', 'error');
+        } else {
+          const iframe = document.createElement('iframe');
+          iframe.src = url;
+          iframe.title = item.name || '文档在线预览';
+          iframe.addEventListener('error', () => showToast('预览失败，请尝试下载后查看', 'error'));
+          els.previewBody.appendChild(iframe);
+        }
+      }
+
+      els.previewModal.classList.add('show');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closePreview() {
+      els.previewModal.classList.remove('show');
+      els.previewBody.innerHTML = '';
+      document.body.style.overflow = '';
+    }
+
+    function renderPagination(totalPages) {
+      if (totalPages <= 1) return;
+      const prev = document.createElement('button');
+      prev.className = 'page-btn';
+      prev.type = 'button';
+      prev.textContent = '‹';
+      prev.disabled = currentPage === 1;
+      prev.addEventListener('click', () => {
+        currentPage -= 1;
+        renderComments();
+      });
+      els.pagination.appendChild(prev);
+
+      for (let page = 1; page <= totalPages; page++) {
+        if (totalPages > 7 && Math.abs(page - currentPage) > 2 && page !== 1 && page !== totalPages) {
+          if (![...els.pagination.children].some(btn => btn.textContent === '…' && btn.disabled)) {
+            const ellipsis = document.createElement('button');
+            ellipsis.className = 'page-btn';
+            ellipsis.type = 'button';
+            ellipsis.disabled = true;
+            ellipsis.textContent = '…';
+            els.pagination.appendChild(ellipsis);
+          }
+          continue;
+        }
+        const btn = document.createElement('button');
+        btn.className = `page-btn${page === currentPage ? ' active' : ''}`;
+        btn.type = 'button';
+        btn.textContent = String(page);
+        btn.addEventListener('click', () => {
+          currentPage = page;
+          renderComments();
+        });
+        els.pagination.appendChild(btn);
+      }
+
+      const next = document.createElement('button');
+      next.className = 'page-btn';
+      next.type = 'button';
+      next.textContent = '›';
+      next.disabled = currentPage === totalPages;
+      next.addEventListener('click', () => {
+        currentPage += 1;
+        renderComments();
+      });
+      els.pagination.appendChild(next);
+    }
+
+    function setReply(comment) {
+      replyParentId = comment.id;
+      replyParentName = comment.visitor_name || '该留言';
+      els.replyText.textContent = `正在回复：${replyParentName}`;
+      els.replyTarget.classList.add('show');
+      localStorage.setItem('memorial_reply_parent_id', replyParentId);
+      localStorage.setItem('memorial_reply_parent_name', replyParentName);
+      els.messageText.focus();
+      window.scrollTo({ top: document.querySelector('.comments-layout').offsetTop - 16, behavior: 'smooth' });
+    }
+
+    function clearReply() {
+      replyParentId = null;
+      replyParentName = '';
+      els.replyText.textContent = '';
+      els.replyTarget.classList.remove('show');
+      localStorage.removeItem('memorial_reply_parent_id');
+      localStorage.removeItem('memorial_reply_parent_name');
+    }
+
+    function bindDraftStorage() {
+      els.visitorName.value = localStorage.getItem('memorial_visitor_name') || '';
+      els.visitorRelation.value = localStorage.getItem('memorial_visitor_relation') || '';
+      els.messageText.value = localStorage.getItem('memorial_draft_content') || '';
+      replyParentId = localStorage.getItem('memorial_reply_parent_id');
+      replyParentName = localStorage.getItem('memorial_reply_parent_name') || '';
+
+      if (els.visitorName.value.trim()) {
+        els.relationRow.classList.add('show');
+      }
+      if (replyParentId && replyParentName) {
+        els.replyText.textContent = `正在回复：${replyParentName}`;
+        els.replyTarget.classList.add('show');
+      }
+
+      els.visitorName.addEventListener('input', () => {
+        const name = els.visitorName.value.trim();
+        localStorage.setItem('memorial_visitor_name', name);
+        els.relationRow.classList.toggle('show', Boolean(name));
+      });
+      els.visitorRelation.addEventListener('change', () => localStorage.setItem('memorial_visitor_relation', els.visitorRelation.value));
+      els.messageText.addEventListener('input', () => localStorage.setItem('memorial_draft_content', els.messageText.value));
     }
 
     function subscribeRealtime() {
       if (!isConfigured) return;
-
       client
-        .channel('memorial-actions-realtime')
+        .channel('memorial-comments-realtime')
         .on('postgres_changes', {
-          event: 'INSERT',
+          event: '*',
           schema: 'public',
-          table: 'memorial_actions'
-        }, payload => {
-          if (!payload.new || records.some(item => item.id === payload.new.id)) return;
-          records = [payload.new, ...records].slice(0, 300);
-          renderRecords();
-          loadStats();
-        })
+          table: COMMENTS_TABLE
+        }, () => loadComments())
         .subscribe(status => {
           if (status === 'CHANNEL_ERROR') {
             showToast('实时更新连接失败，但不影响提交保存。', 'error');
@@ -1926,8 +2314,8 @@
 
     function updateMusicButton() {
       const isPlaying = !els.bgm.paused && !els.bgm.ended;
-      els.musicIcon.textContent = '♪';
-      els.musicText.textContent = isPlaying ? '关闭音乐' : '开启音乐';
+      els.musicIcon.textContent = isPlaying ? 'Ⅱ' : '♪';
+      els.musicText.textContent = isPlaying ? '暂停音乐' : '开启音乐';
     }
 
     async function tryPlayMusic(showBlockedTip = false) {
@@ -1936,90 +2324,70 @@
         updateMusicButton();
         return false;
       }
-
       try {
         await els.bgm.play();
         updateMusicButton();
         return true;
       } catch (error) {
         console.warn('Autoplay blocked or failed:', error);
-        musicEnabled = false;
-        els.bgm.pause();
         updateMusicButton();
-        if (showBlockedTip) {
-          showToast('浏览器阻止了自动播放，请点击右上角“开启音乐”。');
-        }
+        if (showBlockedTip) showToast('浏览器可能阻止了自动播放，请点击“开启音乐”。');
         return false;
       }
     }
 
     function initMusic() {
       updateMusicButton();
-
-      els.bgm.addEventListener('error', () => {
-        showToast('背景音乐加载失败，请检查 assets/secret-garden-piano.mp3 是否存在。', 'error');
-      });
-
+      els.bgm.addEventListener('error', () => showToast('背景音乐加载失败，请检查音乐文件路径。', 'error'));
       els.bgm.addEventListener('play', updateMusicButton);
       els.bgm.addEventListener('pause', updateMusicButton);
-      els.bgm.addEventListener('ended', updateMusicButton);
-
-      if (musicEnabled) {
-        tryPlayMusic(true);
-      }
-
       els.musicToggle.addEventListener('click', async () => {
         const isPlaying = !els.bgm.paused && !els.bgm.ended;
-
         if (isPlaying) {
           musicEnabled = false;
           localStorage.setItem('memorial_music_enabled', 'false');
           els.bgm.pause();
           updateMusicButton();
-          showToast('音乐已关闭，刷新页面后也不会自动播放。');
+          showToast('音乐已暂停。');
           return;
         }
-
         musicEnabled = true;
         localStorage.setItem('memorial_music_enabled', 'true');
-        const played = await tryPlayMusic(false);
-
-        if (played) {
-          showToast('音乐已开启。');
-        } else {
-          showToast('音乐播放失败，请检查音乐文件或浏览器设置。', 'error');
-        }
+        const ok = await tryPlayMusic(false);
+        showToast(ok ? '音乐已开启。' : '音乐播放失败，请检查文件路径或浏览器设置。', ok ? 'normal' : 'error');
       });
+      tryPlayMusic(true);
+      document.addEventListener('click', () => {
+        if (musicEnabled && els.bgm.paused) tryPlayMusic(false);
+      }, { once: true });
     }
 
     function bindEvents() {
-      els.flowerBtn.addEventListener('click', handleFlower);
-      els.candleBtn.addEventListener('click', handleCandle);
-      els.messageBtn.addEventListener('click', handleMessage);
-      els.imageBtn.addEventListener('click', handleImageUpload);
-
-      els.imageInput.addEventListener('change', () => {
-        const file = els.imageInput.files[0];
-        els.fileName.textContent = file ? `已选择：${file.name}` : '支持 jpg、png、webp、gif；单张不超过 5MB。';
+      els.imageInput.addEventListener('change', updateFileInfo);
+      els.docInput.addEventListener('change', updateFileInfo);
+      els.submitCommentBtn.addEventListener('click', submitComment);
+      els.cancelReplyBtn.addEventListener('click', clearReply);
+      els.adminToggleBtn.addEventListener('click', toggleAdminMode);
+      els.previewClose.addEventListener('click', closePreview);
+      els.previewModal.addEventListener('click', event => {
+        if (event.target === els.previewModal) closePreview();
       });
-
-      els.visitorName.addEventListener('input', () => {
-        localStorage.setItem('memorial_visitor_name', els.visitorName.value.trim());
+      document.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && els.previewModal.classList.contains('show')) closePreview();
       });
     }
 
     async function init() {
-      if (!isConfigured) {
-        els.setupWarning.classList.add('show');
-      }
-
-      els.visitorName.value = localStorage.getItem('memorial_visitor_name') || '';
+      if (!isConfigured) els.setupWarning.classList.add('show');
       getVisitorKey();
+      bindDraftStorage();
       startBioCarousel();
+      initVideo();
       initMusic();
       bindEvents();
-      await loadStats();
-      await loadRecords();
+      updateAdminUI();
+      updateFileInfo();
+      await loadComments();
       subscribeRealtime();
     }
 
