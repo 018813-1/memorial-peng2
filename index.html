@@ -1489,8 +1489,13 @@
 
       const reset = setLoading(els.imageBtn, '正在上传…');
       const ext = getFileExt(file);
-      const safeVisitor = visitorName.replace(/[\\/\s]+/g, '_').slice(0, 24);
-      const path = `${getVisitorKey()}/${Date.now()}-${safeVisitor}.${ext}`;
+      // Supabase Storage object key must be a safe ASCII path.
+      // Do not put Chinese names or the original file name into the path.
+      const visitorKey = String(getVisitorKey()).replace(/[^a-zA-Z0-9_-]/g, '') || 'visitor';
+      const randomKey = (window.crypto && crypto.randomUUID)
+        ? crypto.randomUUID().replace(/-/g, '')
+        : Math.random().toString(36).slice(2);
+      const path = `uploads/${visitorKey}/${Date.now()}-${randomKey}.${ext}`;
 
       const { error: uploadError } = await client.storage
         .from(STORAGE_BUCKET)
