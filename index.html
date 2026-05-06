@@ -1292,7 +1292,7 @@
     function getRecordText(record) {
       if (record.action_type === 'flower') return '为彭老师送出了鲜花';
       if (record.action_type === 'candle') return '为彭老师点上了蜡烛';
-      if (record.action_type === 'image') return '上传了一张缅怀图片';
+      if (record.action_type === 'image') return record.content ? `上传了一张缅怀图片：${record.content}` : '上传了一张缅怀图片';
       return record.content || '';
     }
 
@@ -1510,7 +1510,7 @@
       }
 
       const { data: publicData } = client.storage.from(STORAGE_BUCKET).getPublicUrl(path);
-      const ok = await insertAction({ type: 'image', imageUrl: publicData.publicUrl, imagePath: path });
+      const ok = await insertAction({ type: 'image', content: file.name, imageUrl: publicData.publicUrl, imagePath: path });
       reset();
 
       if (ok) {
