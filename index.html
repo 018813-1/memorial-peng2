@@ -445,32 +445,6 @@
       white-space: pre-wrap;
     }
 
-    .emoji-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 10px;
-    }
-
-    .emoji-btn {
-      width: 34px;
-      height: 34px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.16);
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      cursor: pointer;
-      font-size: 18px;
-      line-height: 1;
-      transition: .2s ease;
-    }
-
-    .emoji-btn:hover {
-      border-color: rgba(217,188,125,.72);
-      background: rgba(217,188,125,.14);
-      transform: translateY(-1px);
-    }
-
     .reply-target {
       display: none;
       margin-bottom: 12px;
@@ -1129,16 +1103,6 @@
         min-height: 132px;
       }
 
-      .emoji-row {
-        gap: 7px;
-      }
-
-      .emoji-btn {
-        width: 32px;
-        height: 32px;
-        font-size: 17px;
-      }
-
       .upload-icons {
         gap: 10px;
       }
@@ -1339,16 +1303,7 @@
             </div>
 
             <label for="messageText">缅怀正文 <span aria-hidden="true">*</span></label>
-            <textarea id="messageText" placeholder="写下您对彭老师的思念、感谢、追忆或祝福……可使用表情与 Emoji。"></textarea>
-
-            <div class="emoji-row" aria-label="常用表情">
-              <button class="emoji-btn" type="button" data-emoji="🕯️">🕯️</button>
-              <button class="emoji-btn" type="button" data-emoji="💐">💐</button>
-              <button class="emoji-btn" type="button" data-emoji="🙏">🙏</button>
-              <button class="emoji-btn" type="button" data-emoji="🌹">🌹</button>
-              <button class="emoji-btn" type="button" data-emoji="🤍">🤍</button>
-              <button class="emoji-btn" type="button" data-emoji="🖤">🖤</button>
-            </div>
+            <textarea id="messageText" placeholder="写下您对彭老师的思念、感谢、追忆或祝福……"></textarea>
           </div>
 
           <div class="form-row">
@@ -1434,12 +1389,28 @@
     const FOLD_LIMIT = 200;
 
     const BLOCKED_PATTERNS = [
-      /色情|淫秽|黄色|黄网|成人视频|成人内容|裸聊|裸露|援交|嫖娼|卖淫|约炮|性服务|成人视频|三级片|a片|av女优|色情网|成人视频/i,
-      /赌博|博彩|盘口|下注|赌球|私彩|六合彩/i,
-      /毒品|吸毒|贩毒|冰毒|海洛因|大麻|摇头丸|K粉|麻古/i,
-      /反动|颠覆|分裂国家|煽动|极端组织|恐怖组织|恐怖袭击|暴恐|邪教|非法集会|政治敏感/i,
-      /法轮功|台独|港独|藏独|疆独/i,
-      /辱骂|人身攻击|恶意诽谤|造谣|诅咒|去死|傻逼|垃圾人|畜生/i
+      /国家主席|总书记|总理|人大委员长|政协主席|中央军委|政治局|常委|国家领导人|领导人姓名/i,
+      /独裁|专政|暴政|极权|政权|体制黑暗|一党专制|政治体制|政治敏感/i,
+      /台独|港独|藏独|疆独|独立建国|民族分裂|国家分裂|分裂国家|领土分裂|分裂势力/i,
+      /反动|颠覆|颠覆政权|推翻政府|推翻政权|煽动颠覆|暴乱|政变|革命造反|非法集会|游行示威/i,
+      /法轮功|邪教|极端组织|恐怖组织|恐怖袭击|暴恐|圣战/i,
+
+      /打人|杀人|砍人|捅人|伤人|虐待|殴打|枪击|爆炸|纵火|自杀|血腥|暴力|灭门|报复社会/i,
+      /色情|淫秽|黄色|黄网|成人视频|成人内容|裸聊|裸露|裸体|援交|嫖娼|卖淫|约炮|性服务|性交|做爱|强奸|黄片|色情网|三级片|a片|av女优/i,
+      /美女诱惑|激情四射|性感诱惑|暧昧挑逗|包夜|上门服务|特殊服务/i,
+
+      /笨蛋|脑残|傻逼|蠢货|白痴|废物|垃圾人|畜生|丑八怪|贱人|狗东西|去死|滚蛋|没用的东西/i,
+      /黑人|同性恋恶心|女的都|男的都|宗教垃圾|民族垃圾|低等人|歧视|种族歧视|性别歧视|宗教歧视/i,
+      /侮辱|辱骂|恶意诽谤|造谣|诅咒|辱骂家人|脏话连篇/i,
+
+      /广告|推广|打折促销|购买链接|点击购买|扫码加|加微信|加我微信|vx|微信号|QQ|联系方式|联系电话|手机号|私聊|代理|代购|优惠券|返现|赚钱项目|兼职刷单/i,
+      /https?:\/\/|www\.|\.com|\.cn|\.net|\.org|\.top|\.xyz/i,
+      /\b1[3-9]\d{9}\b/i,
+
+      /大家一起去骂|一起去骂|快来围观|人肉搜索|曝光他|挂人|网暴|冲了他|带节奏/i,
+      /谣言|不实传闻|内幕消息|未经证实|小道消息|造谣传谣|散播谣言/i,
+
+      /诈骗|赌博|博彩|赌球|盘口|下注|私彩|六合彩|洗钱|传销|毒品|吸毒|贩毒|冰毒|海洛因|大麻|摇头丸|K粉|麻古/i
     ];
 
     const isConfigured =
@@ -1505,7 +1476,6 @@
       return String(value || '')
         .normalize('NFKC')
         .replace(/[\s\u200B-\u200D\uFEFF]/g, '')
-        .replace(/[^\p{L}\p{N}\u4e00-\u9fa5]/gu, '')
         .toLowerCase();
     }
 
@@ -2281,19 +2251,6 @@
       localStorage.removeItem('memorial_reply_parent_name');
     }
 
-    function insertEmoji(emoji) {
-      const textarea = els.messageText;
-      const start = textarea.selectionStart ?? textarea.value.length;
-      const end = textarea.selectionEnd ?? textarea.value.length;
-      const before = textarea.value.slice(0, start);
-      const after = textarea.value.slice(end);
-      textarea.value = before + emoji + after;
-      const cursor = start + emoji.length;
-      textarea.setSelectionRange(cursor, cursor);
-      textarea.focus();
-      localStorage.setItem('memorial_draft_content', textarea.value);
-    }
-
     function bindDraftStorage() {
       els.visitorName.value = localStorage.getItem('memorial_visitor_name') || '';
       els.visitorRelation.value = localStorage.getItem('memorial_visitor_relation') || '';
@@ -2408,10 +2365,6 @@
       els.cancelReplyBtn.addEventListener('click', clearReply);
       els.adminToggleBtn.addEventListener('click', toggleAdminMode);
       els.previewClose.addEventListener('click', closePreview);
-
-      document.querySelectorAll('.emoji-btn').forEach(button => {
-        button.addEventListener('click', () => insertEmoji(button.dataset.emoji || ''));
-      });
 
       els.previewModal.addEventListener('click', event => {
         if (event.target === els.previewModal) closePreview();
