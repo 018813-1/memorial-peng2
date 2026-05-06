@@ -1192,6 +1192,138 @@
         font-size: 31px;
       }
     }
+
+
+    /* ===== 手机端浅色可读模式：解决微信/手机浏览器里白字发灰看不清 ===== */
+    @media (max-width: 640px) {
+      :root {
+        --text: #171717;
+        --muted: rgba(0, 0, 0, 0.72);
+        --soft: rgba(0, 0, 0, 0.56);
+        --line: rgba(0, 0, 0, 0.16);
+        --gold: #9f7426;
+        --gold-2: #b5852f;
+      }
+
+      body {
+        color: #171717;
+        background:
+          radial-gradient(circle at 20% 5%, rgba(181, 133, 47, 0.14), transparent 30%),
+          linear-gradient(160deg, #f4f1e8 0%, #ded8ca 58%, #f7f4ec 100%);
+      }
+
+      body::before {
+        opacity: 0.24;
+        background-image:
+          linear-gradient(rgba(0,0,0,0.045) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(0,0,0,0.045) 1px, transparent 1px);
+      }
+
+      body::after {
+        background: linear-gradient(to bottom, rgba(255,255,255,0.22), rgba(255,255,255,0.40));
+      }
+
+      .brand h1,
+      .brand p,
+      .stat-label,
+      .stat-note,
+      .bio-title,
+      .bio-text,
+      .epitaph,
+      .section-kicker,
+      .panel-header h3,
+      .panel-header p,
+      label,
+      .file-name,
+      .record-text,
+      .visitor,
+      .time,
+      .quote-title h2,
+      .quote-text,
+      .quote-source,
+      .footer,
+      .memorial-footer {
+        color: #171717 !important;
+        text-shadow: none !important;
+      }
+
+      .brand-mark,
+      .music-btn,
+      .stat-card,
+      .hero,
+      .portrait-card,
+      .panel,
+      .quote-card {
+        background: rgba(255, 255, 255, 0.58) !important;
+        border-color: rgba(0, 0, 0, 0.16) !important;
+        box-shadow: 0 16px 44px rgba(0, 0, 0, 0.14) !important;
+      }
+
+      .music-btn,
+      .action-btn,
+      .submit-btn,
+      .file-label {
+        color: #171717 !important;
+        border-color: rgba(159, 116, 38, 0.45) !important;
+        background: rgba(255, 255, 255, 0.56) !important;
+      }
+
+      input[type="text"],
+      textarea {
+        color: #171717 !important;
+        background: rgba(255, 255, 255, 0.70) !important;
+        border-color: rgba(0, 0, 0, 0.18) !important;
+      }
+
+      input[type="text"]::placeholder,
+      textarea::placeholder {
+        color: rgba(0, 0, 0, 0.48) !important;
+      }
+
+      .stat-number,
+      .years {
+        color: #9f7426 !important;
+      }
+
+      .record,
+      .empty-state,
+      .quote-item {
+        background: rgba(255, 255, 255, 0.40) !important;
+        border-color: rgba(0, 0, 0, 0.12) !important;
+      }
+
+      .record-icon {
+        background: rgba(159, 116, 38, 0.12) !important;
+        border-color: rgba(159, 116, 38, 0.26) !important;
+      }
+
+      .quote-item {
+        border-left-color: rgba(159, 116, 38, 0.30) !important;
+      }
+
+      .quote-mark {
+        color: rgba(159, 116, 38, 0.85) !important;
+      }
+
+      .toast {
+        color: #171717 !important;
+        background: rgba(255, 255, 255, 0.92) !important;
+        border-color: rgba(0, 0, 0, 0.18) !important;
+      }
+
+      .dot {
+        border-color: rgba(0, 0, 0, 0.35) !important;
+      }
+
+      .dot.active {
+        background: #9f7426 !important;
+        border-color: #9f7426 !important;
+      }
+
+      .meteor {
+        opacity: 0.55;
+      }
+    }
   </style>
 </head>
 <body>
