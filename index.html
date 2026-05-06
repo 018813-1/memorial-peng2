@@ -6,6 +6,7 @@
   <title>彭聃龄先生线上缅怀室</title>
   <meta name="description" content="彭聃龄先生线上缅怀室：浏览生平事迹，送花点烛，留言寄托哀思。" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
     :root {
       --bg-1: #111316;
@@ -67,7 +68,7 @@
       pointer-events: none;
     }
 
-    /* ===== 流星背景效果：桌面与手机都显示 ===== */
+    /* ===== 流星背景效果 ===== */
     .meteor-layer {
       position: fixed;
       inset: 0;
@@ -81,11 +82,15 @@
       width: 180px;
       height: 2px;
       border-radius: 999px;
-      background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,248,222,0.98));
+      background: linear-gradient(
+        90deg,
+        rgba(255,255,255,0),
+        rgba(255,248,226,0.98)
+      );
       box-shadow:
-        0 0 7px rgba(255,255,255,0.95),
-        0 0 18px rgba(241,214,154,0.85),
-        0 0 30px rgba(217,188,125,0.48);
+        0 0 8px rgba(255,255,255,0.95),
+        0 0 18px rgba(241,214,154,0.88),
+        0 0 32px rgba(217,188,125,0.46);
       transform: rotate(-35deg);
       opacity: 0;
       animation: meteor-fall 7s linear infinite;
@@ -102,7 +107,7 @@
       border-radius: 50%;
       background: rgba(255,255,255,0.98);
       box-shadow:
-        0 0 12px rgba(255,255,255,0.95),
+        0 0 14px rgba(255,255,255,0.95),
         0 0 22px rgba(241,214,154,0.85);
     }
 
@@ -163,12 +168,14 @@
       color: var(--gold-2);
       background: rgba(255,255,255,0.05);
       box-shadow: 0 0 32px rgba(217, 188, 125, 0.08);
+      flex-shrink: 0;
     }
 
     .brand h1 {
       font-size: clamp(18px, 2vw, 26px);
       font-weight: 500;
       line-height: 1.25;
+      color: #fff8ea;
     }
 
     .brand p {
@@ -217,6 +224,7 @@
       position: relative;
       overflow: hidden;
       min-height: 112px;
+      backdrop-filter: blur(10px);
     }
 
     .stat-card::after {
@@ -264,6 +272,7 @@
       box-shadow: var(--shadow);
       overflow: hidden;
       position: relative;
+      backdrop-filter: blur(12px);
     }
 
     .hero::before {
@@ -361,6 +370,7 @@
       line-height: 1.25;
       font-weight: 500;
       letter-spacing: .05em;
+      color: #fff9ed;
     }
 
     .bio-text {
@@ -376,6 +386,7 @@
       gap: 9px;
       align-items: center;
       margin-top: 2px;
+      flex-wrap: wrap;
     }
 
     .dot {
@@ -396,21 +407,96 @@
       box-shadow: 0 0 18px rgba(217,188,125,.36);
     }
 
-    .main-area {
-      display: grid;
-      grid-template-columns: minmax(280px, 0.82fr) minmax(340px, 1.18fr);
-      gap: 22px;
+    .quote-section {
       margin-top: 22px;
-      align-items: start;
     }
 
-    .panel, .quote-card {
+    .panel,
+    .quote-card {
       border: 1px solid var(--line);
       border-radius: 30px;
       background: linear-gradient(145deg, rgba(255,255,255,.105), rgba(255,255,255,.045));
       box-shadow: 0 18px 52px rgba(0,0,0,.18);
       backdrop-filter: blur(16px);
       overflow: hidden;
+    }
+
+    .quote-card {
+      padding: 28px 24px;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.095), rgba(255,255,255,.035)),
+        radial-gradient(circle at 12% 0%, rgba(217,188,125,.10), transparent 28%);
+    }
+
+    .quote-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .quote-title-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .quote-icon {
+      font-size: 24px;
+      line-height: 1;
+      color: var(--gold-2);
+      flex-shrink: 0;
+    }
+
+    .quote-title-row h2 {
+      font-size: 22px;
+      font-weight: 500;
+      letter-spacing: .08em;
+      color: #fff8e8;
+    }
+
+    .quote-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .quote-item {
+      display: grid;
+      grid-template-columns: 26px 1fr;
+      gap: 12px;
+      padding: 12px 0 12px 10px;
+      border-left: 2px solid rgba(217,188,125,.16);
+    }
+
+    .quote-mark {
+      color: rgba(241,214,154,.62);
+      font-size: 32px;
+      line-height: 1;
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    .quote-text {
+      color: rgba(255,255,255,.82);
+      font-size: 18px;
+      line-height: 1.9;
+      font-style: italic;
+    }
+
+    .quote-source {
+      margin-top: 8px;
+      color: rgba(255,255,255,.44);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .main-area {
+      display: grid;
+      grid-template-columns: minmax(280px, 0.82fr) minmax(340px, 1.18fr);
+      gap: 22px;
+      margin-top: 22px;
+      align-items: start;
     }
 
     .panel-header {
@@ -429,6 +515,7 @@
       font-size: 20px;
       font-weight: 500;
       letter-spacing: .08em;
+      color: #fff8ea;
     }
 
     .record-count {
@@ -456,7 +543,8 @@
       letter-spacing: .06em;
     }
 
-    input[type="text"], textarea {
+    input[type="text"],
+    textarea {
       width: 100%;
       border: 1px solid rgba(255,255,255,.16);
       border-radius: 18px;
@@ -492,7 +580,9 @@
       margin-top: 16px;
     }
 
-    .action-btn, .submit-btn, .file-label {
+    .action-btn,
+    .submit-btn,
+    .file-label {
       position: relative;
       overflow: hidden;
       border: 1px solid rgba(217,188,125,.42);
@@ -513,7 +603,9 @@
       user-select: none;
     }
 
-    .action-btn:hover, .submit-btn:hover, .file-label:hover {
+    .action-btn:hover,
+    .submit-btn:hover,
+    .file-label:hover {
       transform: translateY(-1px);
       border-color: rgba(217,188,125,.78);
       box-shadow: 0 14px 36px rgba(0,0,0,.22), 0 0 28px rgba(217,188,125,.08);
@@ -675,86 +767,6 @@
       background: rgba(0,0,0,.22);
     }
 
-    /* ===== 先生遗风/语录板块 ===== */
-    .quote-section {
-      margin-top: 22px;
-    }
-
-    .quote-card {
-      padding: 28px 24px;
-      background:
-        linear-gradient(145deg, rgba(255,255,255,.095), rgba(255,255,255,.035)),
-        radial-gradient(circle at 12% 0%, rgba(217,188,125,.10), transparent 28%);
-    }
-
-    .quote-title-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-      margin-bottom: 22px;
-    }
-
-    .quote-title-left {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .quote-icon {
-      font-size: 24px;
-      line-height: 1;
-      color: var(--gold-2);
-    }
-
-    .quote-title-row h2 {
-      font-size: 22px;
-      font-weight: 500;
-      letter-spacing: .08em;
-      color: #fff8e8;
-    }
-
-    .quote-note {
-      color: var(--soft);
-      font-size: 13px;
-      white-space: nowrap;
-    }
-
-    .quote-list {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-
-    .quote-item {
-      display: grid;
-      grid-template-columns: 26px 1fr;
-      gap: 12px;
-      padding: 12px 0 12px 10px;
-      border-left: 2px solid rgba(217,188,125,.16);
-    }
-
-    .quote-mark {
-      color: rgba(241,214,154,.62);
-      font-size: 32px;
-      line-height: 1;
-      font-family: Georgia, "Times New Roman", serif;
-    }
-
-    .quote-text {
-      color: rgba(255,255,255,.82);
-      font-size: 18px;
-      line-height: 1.9;
-      font-style: italic;
-    }
-
-    .quote-source {
-      margin-top: 8px;
-      color: rgba(255,255,255,.44);
-      font-size: 14px;
-      line-height: 1.6;
-    }
-
     .toast {
       position: fixed;
       left: 50%;
@@ -848,38 +860,47 @@
       body {
         background:
           radial-gradient(circle at 20% 5%, rgba(217, 188, 125, 0.10), transparent 28%),
-          linear-gradient(160deg, #101114, #202329 62%, #101113);
+          radial-gradient(circle at 85% 0%, rgba(255,255,255,0.04), transparent 25%),
+          linear-gradient(160deg, #0d0f12 0%, #171a20 58%, #0c0e11 100%);
       }
 
-      .meteor-layer {
-        z-index: 2;
+      body::before {
+        opacity: 1;
+      }
+
+      body::after {
+        background: linear-gradient(to bottom, rgba(0,0,0,.16), rgba(0,0,0,.52));
       }
 
       .meteor {
-        width: 136px;
+        width: 135px;
         height: 3px;
-        background: linear-gradient(90deg, rgba(255,255,255,0), rgba(181,133,47,0.96));
+        background: linear-gradient(
+          90deg,
+          rgba(255,255,255,0),
+          rgba(205,154,54,0.96)
+        );
         box-shadow:
-          0 0 8px rgba(255,255,255,0.92),
-          0 0 18px rgba(181,133,47,0.95),
-          0 0 30px rgba(181,133,47,0.58);
+          0 0 10px rgba(255,255,255,0.9),
+          0 0 20px rgba(205,154,54,0.95),
+          0 0 34px rgba(205,154,54,0.52);
       }
 
       .meteor::before {
         width: 9px;
         height: 9px;
-        background: rgba(255,248,222,1);
+        background: rgba(255,246,220,1);
         box-shadow:
-          0 0 12px rgba(255,255,255,0.95),
-          0 0 22px rgba(181,133,47,0.95);
+          0 0 10px rgba(255,255,255,0.96),
+          0 0 18px rgba(205,154,54,0.95);
       }
 
-      @keyframes meteor-fall {
-        0% { opacity: 0; transform: translate(0, 0) rotate(-35deg); }
-        8% { opacity: .95; }
-        42% { opacity: .95; }
-        100% { opacity: 0; transform: translate(-280px, 205px) rotate(-35deg); }
-      }
+      .meteor-1 { top: 18%; left: 83%; animation-duration: 6.4s; }
+      .meteor-2 { top: 32%; left: 93%; animation-duration: 7.6s; }
+      .meteor-3 { top: 48%; left: 80%; animation-duration: 7.2s; }
+      .meteor-4 { top: 62%; left: 92%; animation-duration: 8.2s; }
+      .meteor-5 { top: 77%; left: 84%; animation-duration: 6.9s; }
+      .meteor-6 { top: 90%; left: 95%; animation-duration: 8.8s; }
 
       .page {
         width: min(100% - 18px, 1180px);
@@ -918,9 +939,10 @@
         width: 100%;
         min-height: 42px;
         padding: 9px 12px;
+        background: rgba(255,255,255,0.06);
       }
 
-      .setup-warning {
+      .setupWarning {
         margin-bottom: 12px;
         border-radius: 16px;
         font-size: 13px;
@@ -936,6 +958,7 @@
         min-height: 92px;
         border-radius: 18px;
         padding: 13px 12px 12px;
+        background: linear-gradient(145deg, rgba(255,255,255,0.11), rgba(255,255,255,0.04));
       }
 
       .stat-card::after {
@@ -960,13 +983,18 @@
         font-size: 11px;
       }
 
-      .hero, .panel, .quote-card {
+      .hero,
+      .panel,
+      .quote-card {
         border-radius: 22px;
       }
 
       .hero {
         padding: 13px;
         gap: 14px;
+        background:
+          linear-gradient(115deg, rgba(255,255,255,.11), rgba(255,255,255,.045)),
+          radial-gradient(circle at 10% 20%, rgba(217,188,125,.12), transparent 32%);
       }
 
       .hero::before {
@@ -977,6 +1005,7 @@
         padding: 16px 12px;
         gap: 13px;
         border-radius: 20px;
+        background: rgba(10,10,10,.22);
       }
 
       .portrait-wrap {
@@ -993,6 +1022,7 @@
         font-size: 34px;
         letter-spacing: .16em;
         text-indent: .16em;
+        color: #fff9ed;
       }
 
       .years {
@@ -1003,6 +1033,7 @@
       .epitaph {
         font-size: 14px;
         line-height: 1.7;
+        color: rgba(245,241,232,.82);
       }
 
       .bio-panel {
@@ -1026,7 +1057,6 @@
       }
 
       .bio-dots {
-        flex-wrap: wrap;
         gap: 8px;
         padding-top: 2px;
       }
@@ -1038,6 +1068,50 @@
 
       .dot.active {
         width: 26px;
+      }
+
+      .quote-section {
+        margin-top: 14px;
+      }
+
+      .quote-card {
+        padding: 20px 16px;
+        background:
+          linear-gradient(145deg, rgba(255,255,255,.10), rgba(255,255,255,.035)),
+          radial-gradient(circle at 12% 0%, rgba(217,188,125,.10), transparent 28%);
+      }
+
+      .quote-title-row {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 14px;
+      }
+
+      .quote-title-row h2 {
+        font-size: 20px;
+        color: #fff8e8;
+      }
+
+      .quote-item {
+        grid-template-columns: 22px 1fr;
+        gap: 8px;
+        padding: 10px 0 10px 8px;
+      }
+
+      .quote-mark {
+        font-size: 28px;
+      }
+
+      .quote-text {
+        font-size: 16px;
+        line-height: 1.85;
+        color: rgba(255,255,255,.90);
+      }
+
+      .quote-source {
+        font-size: 13px;
+        color: rgba(255,255,255,.56);
       }
 
       .main-area {
@@ -1065,7 +1139,8 @@
         font-size: 13px;
       }
 
-      input[type="text"], textarea {
+      input[type="text"],
+      textarea {
         border-radius: 15px;
         padding: 12px 13px;
         font-size: 15px;
@@ -1080,7 +1155,9 @@
         gap: 9px;
       }
 
-      .action-btn, .submit-btn, .file-label {
+      .action-btn,
+      .submit-btn,
+      .file-label {
         min-height: 46px;
         border-radius: 15px;
         padding: 10px 11px;
@@ -1141,49 +1218,6 @@
         border-radius: 14px;
       }
 
-      .quote-section {
-        margin-top: 14px;
-      }
-
-      .quote-card {
-        padding: 20px 16px;
-      }
-
-      .quote-title-row {
-        align-items: flex-start;
-        flex-direction: column;
-        gap: 8px;
-        margin-bottom: 14px;
-      }
-
-      .quote-title-row h2 {
-        font-size: 20px;
-      }
-
-      .quote-note {
-        white-space: normal;
-        font-size: 12px;
-      }
-
-      .quote-item {
-        grid-template-columns: 22px 1fr;
-        gap: 8px;
-        padding: 10px 0 10px 8px;
-      }
-
-      .quote-mark {
-        font-size: 28px;
-      }
-
-      .quote-text {
-        font-size: 16px;
-        line-height: 1.85;
-      }
-
-      .quote-source {
-        font-size: 13px;
-      }
-
       .toast {
         bottom: 18px;
         width: min(92vw, 520px);
@@ -1212,191 +1246,6 @@
       .person-name h2 {
         font-size: 31px;
       }
-    }
-
-
-    /* ===== 手机端浅色可读模式：解决微信/手机浏览器里白字发灰看不清 ===== */
-    @media (max-width: 640px) {
-      :root {
-        --text: #171717;
-        --muted: rgba(0, 0, 0, 0.72);
-        --soft: rgba(0, 0, 0, 0.56);
-        --line: rgba(0, 0, 0, 0.16);
-        --gold: #9f7426;
-        --gold-2: #b5852f;
-      }
-
-      body {
-        color: #171717;
-        background:
-          radial-gradient(circle at 20% 5%, rgba(181, 133, 47, 0.14), transparent 30%),
-          linear-gradient(160deg, #f4f1e8 0%, #ded8ca 58%, #f7f4ec 100%);
-      }
-
-      body::before {
-        opacity: 0.24;
-        background-image:
-          linear-gradient(rgba(0,0,0,0.045) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(0,0,0,0.045) 1px, transparent 1px);
-      }
-
-      body::after {
-        background: linear-gradient(to bottom, rgba(255,255,255,0.22), rgba(255,255,255,0.40));
-      }
-
-      .brand h1,
-      .brand p,
-      .stat-label,
-      .stat-note,
-      .bio-title,
-      .bio-text,
-      .epitaph,
-      .section-kicker,
-      .panel-header h3,
-      .panel-header p,
-      label,
-      .file-name,
-      .record-text,
-      .visitor,
-      .time,
-      .quote-title h2,
-      .quote-title-row h2,
-      .quote-note,
-      .person-name h2,
-      .quote-text,
-      .quote-source,
-      .footer,
-      .memorial-footer {
-        color: #171717 !important;
-        text-shadow: none !important;
-      }
-
-      .brand-mark,
-      .music-btn,
-      .stat-card,
-      .hero,
-      .portrait-card,
-      .panel,
-      .quote-card {
-        background: rgba(255, 255, 255, 0.58) !important;
-        border-color: rgba(0, 0, 0, 0.16) !important;
-        box-shadow: 0 16px 44px rgba(0, 0, 0, 0.14) !important;
-      }
-
-      .music-btn,
-      .action-btn,
-      .submit-btn,
-      .file-label {
-        color: #171717 !important;
-        border-color: rgba(159, 116, 38, 0.45) !important;
-        background: rgba(255, 255, 255, 0.56) !important;
-      }
-
-      input[type="text"],
-      textarea {
-        color: #171717 !important;
-        background: rgba(255, 255, 255, 0.70) !important;
-        border-color: rgba(0, 0, 0, 0.18) !important;
-      }
-
-      input[type="text"]::placeholder,
-      textarea::placeholder {
-        color: rgba(0, 0, 0, 0.48) !important;
-      }
-
-      .stat-number,
-      .years {
-        color: #9f7426 !important;
-      }
-
-      .record,
-      .empty-state,
-      .quote-item {
-        background: rgba(255, 255, 255, 0.40) !important;
-        border-color: rgba(0, 0, 0, 0.12) !important;
-      }
-
-      .record-icon {
-        background: rgba(159, 116, 38, 0.12) !important;
-        border-color: rgba(159, 116, 38, 0.26) !important;
-      }
-
-      .quote-item {
-        border-left-color: rgba(159, 116, 38, 0.30) !important;
-      }
-
-      .quote-mark {
-        color: rgba(159, 116, 38, 0.85) !important;
-      }
-
-      .toast {
-        color: #171717 !important;
-        background: rgba(255, 255, 255, 0.92) !important;
-        border-color: rgba(0, 0, 0, 0.18) !important;
-      }
-
-      .dot {
-        border-color: rgba(0, 0, 0, 0.35) !important;
-      }
-
-      .dot.active {
-        background: #9f7426 !important;
-        border-color: #9f7426 !important;
-      }
-
-
-      /* 手机端重点文字加深：姓名与经典语录标题 */
-      .person-name h2 {
-        color: #171717 !important;
-        font-weight: 700 !important;
-        text-shadow: none !important;
-      }
-
-      .quote-title-row h2 {
-        color: #171717 !important;
-        font-weight: 700 !important;
-        text-shadow: none !important;
-      }
-
-      .quote-icon {
-        color: #8f651c !important;
-        filter: none !important;
-      }
-
-      .quote-note {
-        color: rgba(0, 0, 0, 0.56) !important;
-      }
-
-      /* 手机浅色背景下，强化流星可见度，并让流星浮在页面内容上方 */
-      .meteor-layer {
-        z-index: 2 !important;
-      }
-
-      .meteor {
-        width: 138px !important;
-        height: 3px !important;
-        background: linear-gradient(90deg, rgba(255,255,255,0), rgba(159,116,38,0.98)) !important;
-        box-shadow:
-          0 0 8px rgba(255,255,255,0.95),
-          0 0 20px rgba(159,116,38,0.98),
-          0 0 34px rgba(159,116,38,0.64) !important;
-      }
-
-      .meteor::before {
-        width: 9px !important;
-        height: 9px !important;
-        background: rgba(255,248,222,1) !important;
-        box-shadow:
-          0 0 12px rgba(255,255,255,0.98),
-          0 0 22px rgba(159,116,38,0.95) !important;
-      }
-
-      .meteor-1 { top: 18% !important; left: 86% !important; }
-      .meteor-2 { top: 30% !important; left: 94% !important; }
-      .meteor-3 { top: 44% !important; left: 82% !important; }
-      .meteor-4 { top: 58% !important; left: 92% !important; }
-      .meteor-5 { top: 73% !important; left: 84% !important; }
-      .meteor-6 { top: 88% !important; left: 96% !important; }
     }
   </style>
 </head>
@@ -1577,7 +1426,9 @@
     </main>
 
     <footer class="footer">
-      彭聃龄先生千古<br />愿烛光与鲜花，长伴先生温厚风范。<br />彭聃龄先生线上缅怀室 · 永远的怀念
+      彭聃龄先生千古<br />
+      愿烛光与鲜花，长伴先生温厚风范。<br />
+      彭聃龄先生线上缅怀室 · 永远的怀念
     </footer>
   </div>
 
@@ -1727,6 +1578,7 @@
       els.bioTitle.textContent = slide.title;
       els.bioText.textContent = slide.text;
       els.bioDots.innerHTML = '';
+
       lifeSlides.forEach((_, index) => {
         const dot = document.createElement('button');
         dot.className = `dot${index === currentSlide ? ' active' : ''}`;
@@ -1864,17 +1716,20 @@
         renderRecords();
         return;
       }
+
       const { data, error } = await client
         .from('memorial_actions')
         .select('id, created_at, visitor_name, visitor_key, action_type, content, image_url, image_path')
         .order('created_at', { ascending: false })
         .limit(300);
+
       if (error) {
         console.error(error);
         showToast('缅怀记录加载失败，请检查 Supabase 权限设置。', 'error');
         renderRecords();
         return;
       }
+
       records = data || [];
       renderRecords();
     }
@@ -1899,6 +1754,7 @@
         showToast('保存失败，请稍后再试或检查数据库权限。', 'error');
         return false;
       }
+
       await loadStats();
       return true;
     }
@@ -1928,9 +1784,11 @@
         els.messageText.focus();
         return;
       }
+
       const reset = setLoading(els.messageBtn, '正在提交…');
       const ok = await insertAction({ type: 'message', content });
       reset();
+
       if (ok) {
         els.messageText.value = '';
         showToast('留言已提交。');
@@ -1939,18 +1797,22 @@
 
     function validateImage(file) {
       const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+
       if (!file) {
         showToast('请先选择一张图片。', 'error');
         return false;
       }
+
       if (!allowed.includes(file.type)) {
         showToast('图片格式不支持。仅支持 jpg、png、webp、gif。', 'error');
         return false;
       }
+
       if (file.size > 5 * 1024 * 1024) {
         showToast('图片大小超出限制。单张图片不能超过 5MB。', 'error');
         return false;
       }
+
       return true;
     }
 
@@ -1976,6 +1838,7 @@
         .replace(/[-_.]{2,}/g, '-')
         .replace(/^[-_.]+|[-_.]+$/g, '')
         .toLowerCase();
+
       return (cleaned || fallback).slice(0, 60);
     }
 
@@ -2008,7 +1871,11 @@
 
       const { error: uploadError } = await client.storage
         .from(STORAGE_BUCKET)
-        .upload(path, file, { cacheControl: '3600', upsert: false, contentType: file.type });
+        .upload(path, file, {
+          cacheControl: '3600',
+          upsert: false,
+          contentType: file.type
+        });
 
       if (uploadError) {
         console.error(uploadError);
@@ -2019,7 +1886,13 @@
       }
 
       const { data: publicData } = client.storage.from(STORAGE_BUCKET).getPublicUrl(path);
-      const ok = await insertAction({ type: 'image', content: file.name, imageUrl: publicData.publicUrl, imagePath: path });
+      const ok = await insertAction({
+        type: 'image',
+        content: file.name,
+        imageUrl: publicData.publicUrl,
+        imagePath: path
+      });
+
       reset();
 
       if (ok) {
@@ -2031,6 +1904,7 @@
 
     function subscribeRealtime() {
       if (!isConfigured) return;
+
       client
         .channel('memorial-actions-realtime')
         .on('postgres_changes', {
@@ -2062,6 +1936,7 @@
         updateMusicButton();
         return false;
       }
+
       try {
         await els.bgm.play();
         updateMusicButton();
@@ -2080,9 +1955,11 @@
 
     function initMusic() {
       updateMusicButton();
+
       els.bgm.addEventListener('error', () => {
         showToast('背景音乐加载失败，请检查 assets/secret-garden-piano.mp3 是否存在。', 'error');
       });
+
       els.bgm.addEventListener('play', updateMusicButton);
       els.bgm.addEventListener('pause', updateMusicButton);
       els.bgm.addEventListener('ended', updateMusicButton);
@@ -2093,6 +1970,7 @@
 
       els.musicToggle.addEventListener('click', async () => {
         const isPlaying = !els.bgm.paused && !els.bgm.ended;
+
         if (isPlaying) {
           musicEnabled = false;
           localStorage.setItem('memorial_music_enabled', 'false');
@@ -2105,6 +1983,7 @@
         musicEnabled = true;
         localStorage.setItem('memorial_music_enabled', 'true');
         const played = await tryPlayMusic(false);
+
         if (played) {
           showToast('音乐已开启。');
         } else {
@@ -2118,10 +1997,12 @@
       els.candleBtn.addEventListener('click', handleCandle);
       els.messageBtn.addEventListener('click', handleMessage);
       els.imageBtn.addEventListener('click', handleImageUpload);
+
       els.imageInput.addEventListener('change', () => {
         const file = els.imageInput.files[0];
         els.fileName.textContent = file ? `已选择：${file.name}` : '支持 jpg、png、webp、gif；单张不超过 5MB。';
       });
+
       els.visitorName.addEventListener('input', () => {
         localStorage.setItem('memorial_visitor_name', els.visitorName.value.trim());
       });
@@ -2131,6 +2012,7 @@
       if (!isConfigured) {
         els.setupWarning.classList.add('show');
       }
+
       els.visitorName.value = localStorage.getItem('memorial_visitor_name') || '';
       getVisitorKey();
       startBioCarousel();
