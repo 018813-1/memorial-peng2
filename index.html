@@ -207,13 +207,13 @@
 
     .tribute-main {
       display: grid;
-      grid-template-columns: minmax(220px, .82fr) minmax(320px, 1.1fr) minmax(220px, .82fr);
-      gap: 14px;
+      grid-template-columns: minmax(260px, .9fr) minmax(520px, 1.2fr) minmax(260px, .9fr);
+      gap: 18px;
       padding: 16px;
       align-items: stretch;
     }
 
-    .bio-image-card,
+    .bio-text-card,
     .portrait-landscape {
       border-radius: 24px;
       background: rgba(0,0,0,.18);
@@ -221,29 +221,37 @@
       border: 1px solid rgba(255,255,255,.08);
     }
 
-    .bio-image-card {
+    .bio-text-card {
       display: flex;
-      flex-direction: column;
+      align-items: center;
       justify-content: center;
-      padding: 10px;
-      min-height: 280px;
+      padding: 18px;
+      min-height: 300px;
       background:
         radial-gradient(circle at 20% 0%, rgba(217,188,125,.10), transparent 34%),
-        linear-gradient(145deg, #030405, #0b0d10 70%, #050607);
+        linear-gradient(145deg, #020304, #07090c 68%, #020304);
       box-shadow: inset 0 0 0 1px rgba(217,188,125,.10);
     }
 
-    .bio-image-card img {
+    .bio-text-inner {
       width: 100%;
       height: 100%;
-      max-height: 330px;
-      object-fit: contain;
-      display: block;
       border-radius: 18px;
       background: #000;
-      filter: invert(1) grayscale(1) contrast(1.08);
-      opacity: .96;
-      border: 1px solid rgba(217,188,125,.16);
+      border: 1px solid rgba(217,188,125,.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 28px 24px;
+    }
+
+    .bio-text-inner p {
+      color: rgba(255,255,255,.95);
+      font-size: 15px;
+      line-height: 2.15;
+      text-align: justify;
+      margin: 0;
+      word-break: break-word;
     }
 
     .portrait-landscape {
@@ -284,10 +292,13 @@
     .mourning-title strong {
       display: block;
       font-weight: 500;
-      font-size: clamp(19px, 2vw, 28px);
-      letter-spacing: .12em;
+      font-size: clamp(18px, 1.75vw, 24px);
+      letter-spacing: .04em;
       color: #fff8ea;
-      line-height: 1.4;
+      line-height: 1.45;
+      word-break: keep-all;
+      overflow-wrap: normal;
+      line-break: strict;
     }
 
     .mourning-title span {
@@ -296,6 +307,12 @@
       color: var(--muted);
       font-size: 13px;
       letter-spacing: .12em;
+    }
+
+    @media (min-width: 981px) {
+      .mourning-title strong {
+        white-space: nowrap;
+      }
     }
 
     .setup-warning {
@@ -456,8 +473,7 @@
     }
 
     .mini-btn,
-    .submit-btn,
-    .file-label {
+    .submit-btn {
       border: 1px solid rgba(217,188,125,.42);
       color: #fff8e8;
       background: linear-gradient(135deg, rgba(217,188,125,.25), rgba(255,255,255,.08));
@@ -493,7 +509,6 @@
 
     .mini-btn:hover,
     .submit-btn:hover,
-    .file-label:hover,
     .upload-icon-btn:hover {
       transform: translateY(-1px);
       border-color: rgba(217,188,125,.78);
@@ -908,12 +923,8 @@
         min-height: auto;
       }
 
-      .bio-image-card {
+      .bio-text-card {
         min-height: auto;
-      }
-
-      .bio-image-card img {
-        max-height: none;
       }
 
       .portrait-frame {
@@ -1007,17 +1018,23 @@
         gap: 10px;
       }
 
-      .bio-image-card,
+      .bio-text-card,
       .portrait-landscape {
         border-radius: 18px;
       }
 
-      .bio-image-card {
-        padding: 8px;
+      .bio-text-card {
+        padding: 10px;
       }
 
-      .bio-image-card img {
+      .bio-text-inner {
         border-radius: 14px;
+        padding: 18px 16px;
+      }
+
+      .bio-text-inner p {
+        font-size: 14px;
+        line-height: 2;
       }
 
       .portrait-frame {
@@ -1033,8 +1050,9 @@
       }
 
       .mourning-title strong {
+        white-space: normal;
         font-size: 19px;
-        letter-spacing: .08em;
+        letter-spacing: .06em;
       }
 
       .mourning-title span {
@@ -1196,8 +1214,12 @@
         </div>
 
         <div class="tribute-main">
-          <aside class="bio-image-card" aria-label="生平事迹一">
-            <img src="./assets/生平事迹1.jpg" alt="彭聃龄先生生平事迹介绍一" />
+          <aside class="bio-text-card" aria-label="生平事迹一">
+            <div class="bio-text-inner">
+              <p>
+                彭聃龄先生1935年出生于湖南长沙，1958年毕业于北京师范大学教育系学校教育专业，同年留校任教。先生从教六十余载，始终忠诚党的教育事业，矢志心理学学科建设，潜心育人，笃志治学，将毕生心血奉献给中国心理学事业。
+              </p>
+            </div>
           </aside>
 
           <div class="portrait-landscape">
@@ -1210,8 +1232,12 @@
             </div>
           </div>
 
-          <aside class="bio-image-card" aria-label="生平事迹二">
-            <img src="./assets/生平事迹2.jpg" alt="彭聃龄先生生平事迹介绍二" />
+          <aside class="bio-text-card" aria-label="生平事迹二">
+            <div class="bio-text-inner">
+              <p>
+                彭聃龄先生学问高深而不矜，为人谦和而不争，品格高洁而宽厚。先生潜心笃行，淡泊名利，严谨治学，以诚待人，深受学生、同事和朋友的敬重与爱戴。
+              </p>
+            </div>
           </aside>
         </div>
       </div>
