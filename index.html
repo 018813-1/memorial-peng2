@@ -14,7 +14,6 @@
       --bg-1: #090a0d;
       --bg-2: #171a20;
       --card: rgba(255, 255, 255, 0.075);
-      --card-strong: rgba(255, 255, 255, 0.125);
       --line: rgba(255, 255, 255, 0.16);
       --line-soft: rgba(255, 255, 255, 0.09);
       --text: #f6f2e8;
@@ -24,7 +23,6 @@
       --gold-2: #f1d69a;
       --danger: #f3b8ad;
       --shadow: 0 24px 80px rgba(0, 0, 0, 0.36);
-      --sticky-top: 0px;
     }
 
     * {
@@ -137,7 +135,7 @@
 
     .sticky-tribute {
       position: sticky;
-      top: var(--sticky-top);
+      top: 0;
       z-index: 20;
       padding-top: 10px;
       margin-bottom: 22px;
@@ -162,6 +160,8 @@
       padding: 12px 16px;
       border-bottom: 1px solid var(--line-soft);
       background: rgba(0,0,0,.18);
+      position: relative;
+      z-index: 3;
     }
 
     .brand {
@@ -184,6 +184,10 @@
       letter-spacing: .08em;
     }
 
+    .brand-title {
+      min-width: 0;
+    }
+
     .brand-title h1 {
       font-size: clamp(17px, 2vw, 25px);
       font-weight: 500;
@@ -197,6 +201,9 @@
       color: var(--muted);
       font-size: 13px;
       letter-spacing: .16em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .music-btn {
@@ -216,6 +223,7 @@
       backdrop-filter: blur(14px);
       font-family: inherit;
       white-space: nowrap;
+      flex-shrink: 0;
     }
 
     .music-btn:hover,
@@ -945,6 +953,83 @@
         margin-bottom: 14px;
       }
 
+      .tribute-shell {
+        overflow: visible;
+        border-radius: 22px;
+      }
+
+      .tribute-topline {
+        position: sticky;
+        top: 0;
+        z-index: 60;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: start;
+        gap: 6px 10px;
+        padding: 12px 14px 10px;
+        border-radius: 22px 22px 0 0;
+        background: rgba(22, 23, 27, 0.92);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+      }
+
+      .brand {
+        min-width: 0;
+        gap: 8px;
+        align-items: flex-start;
+      }
+
+      .brand-mark {
+        width: 32px;
+        height: 32px;
+        flex-basis: 32px;
+      }
+
+      .brand-title h1 {
+        font-size: 18px;
+        line-height: 1.2;
+      }
+
+      .brand-title p {
+        font-size: 12px;
+        margin-top: 3px;
+        letter-spacing: .08em;
+        white-space: normal;
+        overflow: visible;
+        text-overflow: unset;
+        line-height: 1.35;
+      }
+
+      .music-btn {
+        width: auto;
+        min-width: auto;
+        min-height: auto;
+        padding: 2px 0;
+        border: none;
+        border-radius: 0;
+        background: transparent;
+        color: var(--gold-2);
+        box-shadow: none;
+        backdrop-filter: none;
+        justify-self: end;
+        align-self: start;
+        font-size: 13px;
+        line-height: 1.2;
+        gap: 4px;
+      }
+
+      .music-btn:hover {
+        transform: none;
+        box-shadow: none;
+        border-color: transparent;
+      }
+
+      .music-btn #musicIcon,
+      .music-btn #musicText {
+        font-size: 13px;
+        line-height: 1.2;
+      }
+
       .star {
         width: 150px;
         height: 3px;
@@ -955,35 +1040,8 @@
         padding: 8px 0 38px;
       }
 
-      .tribute-shell,
       .section-block {
         border-radius: 22px;
-      }
-
-      .tribute-topline {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 10px;
-        padding: 12px;
-      }
-
-      .brand-mark {
-        width: 34px;
-        height: 34px;
-        flex-basis: 34px;
-      }
-
-      .brand-title h1 {
-        font-size: 19px;
-      }
-
-      .brand-title p {
-        font-size: 12px;
-      }
-
-      .music-btn {
-        width: 100%;
-        min-height: 40px;
       }
 
       .tribute-main {
@@ -1343,12 +1401,7 @@
     const COMMENTS_TABLE = 'memorial_comments';
 
     const DEFAULT_PORTRAIT = './assets/2.jpg';
-
-    const VIDEO_CANDIDATES = [
-      './追忆影像.mp4',
-      './assets/追忆影像.mp4'
-    ];
-
+    const VIDEO_CANDIDATES = ['./assets/追忆影像.mp4'];
     const MUSIC_CANDIDATES = [
       './assets/带着钢琴去旅行 - 神秘园之歌-钢琴曲.mp3',
       './assets/secret-garden-piano.mp3'
@@ -1543,14 +1596,7 @@
       els.memoryVideo.src = VIDEO_CANDIDATES[currentVideoIndex];
 
       els.memoryVideo.addEventListener('error', () => {
-        if (currentVideoIndex < VIDEO_CANDIDATES.length - 1) {
-          currentVideoIndex++;
-          els.memoryVideo.src = VIDEO_CANDIDATES[currentVideoIndex];
-          els.memoryVideo.load();
-          tryPlayVideo(false);
-        } else {
-          showToast('视频加载失败：请确认“追忆影像.mp4”在仓库根目录或 assets 文件夹中。', 'error');
-        }
+        showToast('视频加载失败：请确认“追忆影像.mp4”在 assets 文件夹中。', 'error');
       });
 
       els.videoReplayBtn.addEventListener('click', async () => {
