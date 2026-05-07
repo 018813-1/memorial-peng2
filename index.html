@@ -660,6 +660,12 @@
       font-family: "Microsoft YaHei", sans-serif;
     }
 
+    .edited-mark {
+      color: var(--soft);
+      font-size: 12px;
+      margin-left: 6px;
+    }
+
     .comment-content {
       color: rgba(255,255,255,.84);
       line-height: 1.86;
@@ -1345,7 +1351,7 @@
           <div class="form-row">
             <div class="reply-target" id="replyTarget">
               <span id="replyText"></span>
-              <button class="mini-btn ghost-btn" id="cancelReplyBtn" type="button">取消回复</button>
+              <button class="mini-btn ghost-btn" id="cancelReplyBtn" type="button">取消</button>
             </div>
 
             <label for="messageText">缅怀正文 <span aria-hidden="true">*</span></label>
@@ -1498,6 +1504,8 @@
     let currentPage = 1;
     let replyParentId = null;
     let replyParentName = '';
+    let editingCommentId = null;
+    let editingOriginalContent = '';
     let toastTimer = null;
     let adminToken = sessionStorage.getItem('memorial_admin_token') || '';
     let adminMode = Boolean(adminToken);
@@ -1865,6 +1873,11 @@
     async function submitComment() {
       if (!requireBackend()) return;
 
+      if (editingCommentId) {
+        await updateOwnComment();
+        return;
+      }
+
       const checked = validateIdentityAndContent();
       if (!checked) return;
       if (!passRiskCheck(checked)) return;
@@ -1901,6 +1914,7 @@
         els.docInput.value = '';
 
         clearReply();
+        clearEdit();
         updateFileInfo();
 
         showToast('留言已提交。');
@@ -1921,7 +1935,7 @@
 
       const { data, error } = await client
         .from(COMMENTS_TABLE)
-        .select('id, created_at, visitor_name, visitor_relation, visitor_key, content, parent_id, attachments')
+        .select('id, created_at, updated_at, visitor_name, visitor_relation, visitor_key, content, parent_id, attachments')
         .order('created_at', { ascending: false })
         .limit(1000);
 
@@ -2021,6 +2035,13 @@
       time.className = 'time';
       time.textContent = formatTime(comment.created_at);
 
+      const edited = comment.updated_at ? document.createElement('span') : null;
+      if (edited) {
+        edited.className = 'edited-mark';
+        edited.textContent = '已修改';
+        time.appendChild(edited);
+      }
+
       meta.appendChild(left);
       meta.appendChild(time);
       card.appendChild(meta);
@@ -2071,6 +2092,13 @@
       const isOwnComment = comment.visitor_key && comment.visitor_key === getVisitorKey();
 
       if (isOwnComment) {
+        const editBtn = document.createElement('button');
+        editBtn.className = 'mini-btn';
+        editBtn.type = 'button';
+        editBtn.textContent = '修改我的留言';
+        editBtn.addEventListener('click', () => setEdit(comment));
+        actions.appendChild(editBtn);
+
         const ownDeleteBtn = document.createElement('button');
         ownDeleteBtn.className = 'mini-btn danger-btn';
         ownDeleteBtn.type = 'button';
@@ -2287,7 +2315,43 @@
       els.pagination.appendChild(next);
     }
 
+    function setEdit(comment) {
+      clearReply();
+
+      editingCommentId = comment.id;
+      editingOriginalContent = comment.content || '';
+
+      els.replyText.textContent = '正在修改自己的留言';
+      els.replyTarget.classList.add('show');
+
+      els.messageText.value = editingOriginalContent;
+      localStorage.setItem('memorial_draft_content', els.messageText.value);
+
+      els.imageInput.value = '';
+      els.docInput.value = '';
+      updateFileInfo();
+
+      els.submitCommentBtn.textContent = '保存修改';
+      els.messageText.focus();
+
+      const target = document.querySelector('.comments-layout');
+      if (target) {
+        window.scrollTo({
+          top: target.offsetTop - 16,
+          behavior: 'smooth'
+        });
+      }
+    }
+
+    function clearEdit() {
+      editingCommentId = null;
+      editingOriginalContent = '';
+      els.submitCommentBtn.textContent = '提交留言';
+    }
+
     function setReply(comment) {
+      clearEdit();
+
       replyParentId = comment.id;
       replyParentName = comment.visitor_name || '该留言';
 
@@ -2316,6 +2380,16 @@
 
       localStorage.removeItem('memorial_reply_parent_id');
       localStorage.removeItem('memorial_reply_parent_name');
+    }
+
+    function cancelCurrentAction() {
+      clearReply();
+      clearEdit();
+      els.messageText.value = '';
+      localStorage.removeItem('memorial_draft_content');
+      els.imageInput.value = '';
+      els.docInput.value = '';
+      updateFileInfo();
     }
 
     function bindDraftStorage() {
@@ -2370,6 +2444,68 @@
       updateAdminUI();
       renderComments();
       showToast('管理员模式已开启。');
+    }
+
+    async function updateOwnComment() {
+      if (!requireBackend()) return;
+
+      const newContent = els.messageText.value.trim();
+
+      if (!newContent) {
+        showToast('请输入修改后的留言内容。', 'error');
+        els.messageText.focus();
+        return;
+      }
+
+      if (hasBlockedContent(newContent)) {
+        showToast('修改内容包含不适宜展示的信息，无法保存。', 'error');
+        return;
+      }
+
+      const { images, docs } = selectedFiles();
+      if (images.length || docs.length) {
+        showToast('修改留言暂不支持新增附件。如需更换附件，请删除后重新发布。', 'error');
+        return;
+      }
+
+      const reset = setLoading(els.submitCommentBtn, '正在保存…');
+
+      try {
+        const { error } = await client.rpc('update_own_memorial_comment', {
+          target_comment_id: editingCommentId,
+          own_visitor_key: getVisitorKey(),
+          new_content: newContent
+        });
+
+        if (error) throw error;
+
+        showToast('留言已修改。');
+
+        els.messageText.value = '';
+        localStorage.removeItem('memorial_draft_content');
+
+        clearEdit();
+        clearReply();
+
+        await loadComments();
+      } catch (error) {
+        console.error(error);
+
+        const msg = error.message || '';
+
+        if (msg.includes('not owner')) {
+          showToast('修改失败：这条留言不是在当前设备上发布的。', 'error');
+        } else if (msg.includes('blocked content')) {
+          showToast('修改失败：内容包含不适宜展示的信息。', 'error');
+        } else if (msg.includes('Could not find the function') || msg.includes('update_own_memorial_comment')) {
+          showToast('修改失败：请先在 Supabase 中创建本人修改函数。', 'error');
+        } else {
+          showToast('修改失败，请稍后再试。', 'error');
+        }
+      } finally {
+        reset();
+        els.submitCommentBtn.textContent = editingCommentId ? '保存修改' : '提交留言';
+      }
     }
 
     async function deleteOwnComment(comment) {
@@ -2460,7 +2596,7 @@
       els.imageInput.addEventListener('change', updateFileInfo);
       els.docInput.addEventListener('change', updateFileInfo);
       els.submitCommentBtn.addEventListener('click', submitComment);
-      els.cancelReplyBtn.addEventListener('click', clearReply);
+      els.cancelReplyBtn.addEventListener('click', cancelCurrentAction);
       els.adminToggleBtn.addEventListener('click', toggleAdminMode);
       els.previewClose.addEventListener('click', closePreview);
 
