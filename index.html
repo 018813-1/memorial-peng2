@@ -945,6 +945,11 @@
           linear-gradient(160deg, #0c0e11, #171a20 60%, #0a0c0f 100%);
       }
 
+      .page {
+        width: calc(100% - 12px);
+        padding: 6px 0 38px;
+      }
+
       .sticky-tribute {
         padding-top: 6px;
         margin-bottom: 14px;
@@ -963,7 +968,7 @@
         align-items: flex-start;
         justify-content: flex-start;
         gap: 8px;
-        padding: 12px 14px 10px;
+        padding: 10px 12px;
         border-radius: 22px 22px 0 0;
         background: rgba(22, 23, 27, 0.92);
         backdrop-filter: blur(16px);
@@ -977,25 +982,27 @@
       }
 
       .brand-mark {
-        width: 32px;
-        height: 32px;
-        flex-basis: 32px;
-        font-size: 14px;
+        width: 30px;
+        height: 30px;
+        flex-basis: 30px;
+        font-size: 13px;
       }
 
       .brand-title h1 {
-        font-size: 18px;
-        line-height: 1.2;
+        font-size: clamp(16px, 5vw, 20px);
+        line-height: 1.25;
+        letter-spacing: .02em;
+        white-space: normal;
+        word-break: break-word;
       }
 
       .brand-title p {
-        font-size: 12px;
-        margin-top: 3px;
-        letter-spacing: .08em;
+        font-size: 11px;
+        line-height: 1.35;
+        letter-spacing: .06em;
         white-space: normal;
         overflow: visible;
         text-overflow: unset;
-        line-height: 1.35;
       }
 
       .star {
@@ -1003,18 +1010,13 @@
         height: 3px;
       }
 
-      .page {
-        width: min(100% - 16px, 1180px);
-        padding: 8px 0 38px;
-      }
-
       .section-block {
         border-radius: 22px;
       }
 
       .tribute-main {
-        padding: 10px;
-        gap: 10px;
+        padding: 8px;
+        gap: 8px;
       }
 
       .bio-text-card,
@@ -1023,18 +1025,19 @@
       }
 
       .bio-text-card {
-        padding: 10px;
+        padding: 8px;
       }
 
       .bio-text-inner {
         border-radius: 14px;
-        padding: 18px 16px;
+        padding: 14px 13px;
         min-height: auto;
       }
 
       .bio-text-inner p {
-        font-size: 14px;
-        line-height: 2;
+        font-size: clamp(12px, 3.7vw, 14px);
+        line-height: 1.85;
+        letter-spacing: 0;
       }
 
       .portrait-frame {
@@ -1047,13 +1050,17 @@
       }
 
       .mourning-title {
-        padding: 11px 10px 12px;
+        padding: 10px 8px 11px;
       }
 
       .mourning-title strong {
+        font-size: clamp(15px, 4.8vw, 18px);
+        line-height: 1.45;
+        letter-spacing: .02em;
         white-space: normal;
-        font-size: 19px;
-        letter-spacing: .06em;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+        line-break: auto;
       }
 
       .section-block {
@@ -1066,7 +1073,24 @@
 
       .section-header h2,
       .section-header h3 {
-        font-size: 18px;
+        font-size: clamp(17px, 5vw, 20px);
+        letter-spacing: .04em;
+      }
+
+      label {
+        font-size: 13px;
+      }
+
+      input[type="text"],
+      select,
+      textarea {
+        border-radius: 15px;
+        padding: 12px 13px;
+        font-size: 14px;
+      }
+
+      textarea {
+        min-height: 132px;
       }
 
       .memory-video-wrap {
@@ -1089,18 +1113,6 @@
 
       .form-body {
         padding: 16px;
-      }
-
-      input[type="text"],
-      select,
-      textarea {
-        border-radius: 15px;
-        padding: 12px 13px;
-        font-size: 15px;
-      }
-
-      textarea {
-        min-height: 132px;
       }
 
       .upload-icons {
@@ -1135,9 +1147,19 @@
         display: block;
       }
 
+      .comment-content {
+        font-size: 14px;
+        line-height: 1.75;
+      }
+
+      .visitor-name {
+        font-size: 15px;
+      }
+
       .time {
         display: block;
         margin-top: 4px;
+        font-size: 11px;
       }
 
       .image-gallery {
@@ -1190,125 +1212,30 @@
         border-radius: 15px;
       }
     }
-    /* ===== 移动端字体与布局适配补丁：解决小屏显示不全 ===== */
-@media (max-width: 640px) {
-  .page {
-    width: calc(100% - 12px);
-    padding-top: 6px;
-  }
 
-  .brand-title h1 {
-    font-size: clamp(16px, 5vw, 20px);
-    line-height: 1.25;
-    letter-spacing: .02em;
-    white-space: normal;
-    word-break: break-word;
-  }
+    @media (max-width: 380px) {
+      .brand-title h1 {
+        font-size: 16px;
+      }
 
-  .brand-title p {
-    font-size: 11px;
-    line-height: 1.35;
-    letter-spacing: .06em;
-  }
+      .mourning-title strong {
+        font-size: 15px;
+        letter-spacing: 0;
+      }
 
-  .brand-mark {
-    width: 30px;
-    height: 30px;
-    flex-basis: 30px;
-    font-size: 13px;
-  }
+      .bio-text-inner p {
+        font-size: 12px;
+        line-height: 1.75;
+      }
 
-  .tribute-topline {
-    padding: 10px 12px;
-  }
+      .section-header {
+        padding: 14px 14px 10px;
+      }
 
-  .tribute-main {
-    padding: 8px;
-    gap: 8px;
-  }
-
-  .mourning-title {
-    padding: 10px 8px 11px;
-  }
-
-  .mourning-title strong {
-    font-size: clamp(15px, 4.8vw, 18px);
-    line-height: 1.45;
-    letter-spacing: .02em;
-    white-space: normal;
-    word-break: break-word;
-    overflow-wrap: anywhere;
-    line-break: auto;
-  }
-
-  .bio-text-card {
-    padding: 8px;
-  }
-
-  .bio-text-inner {
-    padding: 14px 13px;
-  }
-
-  .bio-text-inner p {
-    font-size: clamp(12px, 3.7vw, 14px);
-    line-height: 1.85;
-    letter-spacing: 0;
-  }
-
-  .section-header h2,
-  .section-header h3 {
-    font-size: clamp(17px, 5vw, 20px);
-    letter-spacing: .04em;
-  }
-
-  label {
-    font-size: 13px;
-  }
-
-  input[type="text"],
-  select,
-  textarea {
-    font-size: 14px;
-  }
-
-  .comment-content {
-    font-size: 14px;
-    line-height: 1.75;
-  }
-
-  .visitor-name {
-    font-size: 15px;
-  }
-
-  .time {
-    font-size: 11px;
-  }
-}
-
-/* 超小屏进一步压缩，比如微信内置浏览器窄屏 */
-@media (max-width: 380px) {
-  .brand-title h1 {
-    font-size: 16px;
-  }
-
-  .mourning-title strong {
-    font-size: 15px;
-    letter-spacing: 0;
-  }
-
-  .bio-text-inner p {
-    font-size: 12px;
-    line-height: 1.75;
-  }
-
-  .section-header {
-    padding: 14px 14px 10px;
-  }
-
-  .form-body {
-    padding: 14px;
-  }
-}
+      .form-body {
+        padding: 14px;
+      }
+    }
   </style>
 </head>
 
@@ -1610,11 +1537,7 @@
         /(国家主席|总书记|总统|总理|首相|国家领导人|党和国家领导人)[\u4e00-\u9fa5]{2,4}/i.test(normalized) ||
         /[\u4e00-\u9fa5]{2,4}(总统|总理|首相|主席|总书记)/i.test(normalized);
 
-      if (politicalTitleNearName) {
-        return true;
-      }
-
-      return false;
+      return politicalTitleNearName;
     }
 
     function commentHasBlockedContent(comment) {
@@ -2145,11 +2068,22 @@
       replyBtn.addEventListener('click', () => setReply(comment));
       actions.appendChild(replyBtn);
 
+      const isOwnComment = comment.visitor_key && comment.visitor_key === getVisitorKey();
+
+      if (isOwnComment) {
+        const ownDeleteBtn = document.createElement('button');
+        ownDeleteBtn.className = 'mini-btn danger-btn';
+        ownDeleteBtn.type = 'button';
+        ownDeleteBtn.textContent = '删除我的留言';
+        ownDeleteBtn.addEventListener('click', () => deleteOwnComment(comment));
+        actions.appendChild(ownDeleteBtn);
+      }
+
       if (adminMode) {
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'mini-btn danger-btn';
         deleteBtn.type = 'button';
-        deleteBtn.textContent = '删除';
+        deleteBtn.textContent = '管理员删除';
         deleteBtn.addEventListener('click', () => deleteComment(comment));
         actions.appendChild(deleteBtn);
       }
@@ -2436,6 +2370,37 @@
       updateAdminUI();
       renderComments();
       showToast('管理员模式已开启。');
+    }
+
+    async function deleteOwnComment(comment) {
+      if (!requireBackend()) return;
+
+      const ok = window.confirm('确认删除这条留言吗？如果这条留言下面有回复，也会一并删除。此操作不可撤销。');
+      if (!ok) return;
+
+      try {
+        const { error } = await client.rpc('delete_own_memorial_comment', {
+          target_comment_id: comment.id,
+          own_visitor_key: getVisitorKey()
+        });
+
+        if (error) throw error;
+
+        showToast('你的留言已删除。');
+        await loadComments();
+      } catch (error) {
+        console.error(error);
+
+        const msg = error.message || '';
+
+        if (msg.includes('not owner')) {
+          showToast('删除失败：这条留言不是在当前设备上发布的。', 'error');
+        } else if (msg.includes('Could not find the function') || msg.includes('delete_own_memorial_comment')) {
+          showToast('删除失败：请先在 Supabase 中创建本人删除函数。', 'error');
+        } else {
+          showToast('删除失败，请稍后再试。', 'error');
+        }
+      }
     }
 
     async function deleteComment(comment) {
